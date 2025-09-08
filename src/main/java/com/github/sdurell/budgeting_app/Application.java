@@ -1,13 +1,14 @@
 package com.github.sdurell.budgeting_app;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BudgetingAppApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BudgetingAppApplication.class, args);
-	}
+		SpringApplication.run(Application.class, args);
+	} 
 
 }
