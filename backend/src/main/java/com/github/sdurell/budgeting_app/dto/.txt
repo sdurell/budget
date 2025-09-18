@@ -1,3 +1,0 @@
-Data Transfer Objects
-(will only use if I need an easy way of
-transporting entity data around app)

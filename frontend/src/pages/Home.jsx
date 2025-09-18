@@ -1,7 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import TestButton from "../components/TestButton";
+import { useAuth } from "../contexts/AuthContext";
+import api from "../services/api";
 
 function Home() {
-    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     return (
     <div className="home container mt-5">
@@ -15,12 +17,18 @@ function Home() {
             <button 
                 className="btn btn-danger mt-3" 
                 onClick={() => {
-                    localStorage.removeItem("user");
-                    navigate("/login", {replace: true});
+                    const fetchLogout = async () => {
+                        try{
+                            await api.post('/auth/logout');
+                            logout();
+                        } catch {}
+                    }
+                    fetchLogout();
                 }}
             >
                 Logout
             </button>
+            <TestButton/>
         </div>
     </div>
     )

@@ -1,34 +1,93 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import api from "../services/api.js";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    // null = not logged in
-    const [user, setUser] = useState(() => {
-        const storedUser = localStorage.getItem("user")
-        return storedUser ? JSON.parse(storedUser) : null;
-    });
+    // null = not logged in, undefined = still checking (initializing)
+    const [token, setToken] = useState();
+    const [initializing, setInitializing] = useState(true);
+    const didRun = useRef(false);
 
+    // Try to restore session on first load
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        if (didRun.current) return;
+        didRun.current = true;
 
-        if (storedUser) setUser(JSON.parse(storedUser));
+        const fetchToken = async () => {
+            try {
+                const response = await api.post("/auth/refresh", {}, {
+                    withCredentials: true,
+                });
+                setToken(response.data.accessToken);
+            } catch {
+                setToken(null);
+            } finally {
+                setInitializing(false);
+            }
+        };
+        fetchToken();
     }, []);
 
-    useEffect(() => {
-        if (user !== null){
-            localStorage.setItem('user', JSON.stringify(user))
+    useLayoutEffect(() => {
+        const authInterceptor = api.interceptors.request.use((config) => {
+            config.headers.Authorization = 
+                !config._retry && token
+                    ? `Bearer ${token}`
+                    : config.headers.Authorization;
+        return config;
+        }, error => Promise.reject(error));
+
+        return () => {
+            api.interceptors.request.eject(authInterceptor);
+        };
+    }, [token]);
+
+    useLayoutEffect(() => {
+        const refreshInterceptor = api.interceptors.response.use(
+            (response) => response,
+            async (error) => {
+                const originalRequest = error.config;
+                if (
+                    error.response &&
+                    !originalRequest._retry && 
+                    !originalRequest.url.includes("/auth/refresh")
+                ) {
+                    if (error.response.status === 401) {
+                        originalRequest._retry = true;
+                        try {
+                            const response = await api.post('/auth/refresh', {}, {
+                                withCredentials: true
+                            });
+    
+                            setToken(response.data.accessToken);
+                            originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`
+                            return api(originalRequest);
+                        } catch {
+                            setToken(null);
+                            return Promise.reject(error);
+                        }
+                    }
+                }
+
+                return Promise.reject(error);
+            },
+        );
+
+        return () => {
+            api.interceptors.response.eject(refreshInterceptor);
         }
-    }, [user]);
+    }, []);
 
-    const login = (userData) => setUser(userData);
+    const login = (tokenData) => setToken(tokenData);
 
-    const logout = () => setUser(null);
+    const logout = () => setToken(null);
 
     const value = {
-        user,
+        token,
         login,
-        logout
+        logout,
+        initializing,
     }
 
     return (
