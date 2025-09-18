@@ -1,80 +1,27 @@
-import { useEffect, useState } from "react";
-import MovieCard from "../components/MovieCard";
-import "../css/Home.css";
-import { getPopularMovies, searchMovies } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-    const [searchQuery, setSearchQuery] = useState("");
-
-    const [movies, setMovies] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const loadPopularMovies = async () => {
-            try {
-                const popularMovies = await getPopularMovies();
-                setMovies(popularMovies);
-            } catch (err) {
-                console.log(err)
-                setError("Failed to load movies...")
-            }
-            finally {
-                setLoading(false);
-            }
-        }
-
-        loadPopularMovies();
-    }, [])
-
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        if (!searchQuery.trim()) return
-        if (loading) return
-
-        setLoading(true);
-        try {
-            const searchResults = await searchMovies(searchQuery)
-            setMovies(searchResults)
-            setError(null)
-        } catch (err){
-            console.log(err)
-            setError("Failed to search...")
-        } finally {
-            setLoading(false)
-        }
-    };
+    const navigate = useNavigate();
 
     return (
-    <div className="home">
-        <form onSubmit={handleSearch} className="search-form">
-            <input 
-                type="text" 
-                placeholder="Search for movies..." 
-                className="search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            <button type="submit" className="search-button">Search</button>
-        </form>
-        
-        {error && (<div className="error-message">{error}</div>
-        )}
-
-        {loading ? (
-            <div className="loading">Loading...</div>
-        ) : (
-            <div className="movies-grid">
-            {movies.map(
-                (movie) =>
-                    movie.title.toLowerCase().startsWith(searchQuery) && (
-                        <MovieCard movie={movie} ley={movie.id} />
-                    )
-            )}
-            </div>
-        )}
-        
+    <div className="home container mt-5">
+        <div className="text-center">
+            <h1 className="display-4 mb-4">
+                Home Page
+            </h1>
+            <p className="lead">
+                Hello! If you are not logged in, you should not be here!
+            </p>
+            <button 
+                className="btn btn-danger mt-3" 
+                onClick={() => {
+                    localStorage.removeItem("user");
+                    navigate("/login", {replace: true});
+                }}
+            >
+                Logout
+            </button>
+        </div>
     </div>
     )
 }

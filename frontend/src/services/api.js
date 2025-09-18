@@ -1,14 +1,15 @@
-const API_KEY = ""
-const BASE_URL = "https://api.themoviedb.org/3"
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
-export const getPopularMovies = async () => {
-    const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
-    const data = await response.json()
-    return data.results
-}
+export const authenticateLogin = async (username, password) => {
+    // const response = await fetch(``);
+    // const data = await response.json();
+    // return data.results;
+    await sleep(1500);
 
-export const searchMovies = async (query) => {
-    const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURI(query)}`);
-    const data = await response.json()
-    return data.results
+    if(username === "Spencer" && password === "Durell"){
+        return "Spencer";
+    }
+    else{
+        throw new Error("Wrong username/password");
+    }
 }
