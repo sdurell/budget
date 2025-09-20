@@ -1,6 +1,5 @@
 package com.github.sdurell.budgeting_app.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +19,6 @@ public class SecurityConfig {
     private JwtAuthEntryPoint authEntryPoint;
     private CustomUserDetailsService userDetailsService;
 
-    @Autowired
     public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint){
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
