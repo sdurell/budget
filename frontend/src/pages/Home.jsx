@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Home() {
     const navigate = useNavigate();
@@ -14,6 +15,21 @@ function Home() {
             </p>
             <button 
                 className="btn btn-danger mt-3" 
+                onClick={() => {
+                    const fetchLogout = async () => {
+                        try{
+                            await api.post('/logout');
+                            logout();
+                            navigate("/login", {replace: true});
+                        } catch {}
+                    }
+                    fetchLogout();
+                }}
+            >
+                Logout
+            </button>
+            <button 
+                className="btn btn-primary mt-3" 
                 onClick={() => {
                     localStorage.removeItem("user");
                     navigate("/login", {replace: true});

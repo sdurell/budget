@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { authenticateLogin } from "../services/api";
+import api from "../services/api";
 
 function Login() {
     const { login } = useAuth();
@@ -22,9 +22,10 @@ function Login() {
         setLoading(true);
         try {
             // call backend api
-            const res = await authenticateLogin(username, password);
-            
-            login(res);
+            const response = await api.post("/auth/login", JSON.stringify({username, password}, {
+                withCredentials: true
+            }));           
+            login(response.data.accessToken);
             navigate(from, {replace : true});
         } catch (err) {
             setError(err.message);
