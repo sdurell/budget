@@ -21,10 +21,17 @@ function Login() {
 
         setLoading(true);
         try {
-            // call backend api
-            const response = await api.post("/auth/login", JSON.stringify({username, password}, {
-                withCredentials: true
-            }));           
+            // const response = await api.post("/auth/login", JSON.stringify({username, password}, {
+            //     withCredentials: true
+            // }));
+            
+            const response = await api.post("/auth/login",
+                JSON.stringify({username, password}),
+                {
+                    withCredentials: true
+                }
+            );
+
             login(response.data.accessToken);
             navigate(from, {replace : true});
         } catch (err) {

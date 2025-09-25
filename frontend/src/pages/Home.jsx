@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
 
 function Home() {
-    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     return (
     <div className="home container mt-5">
@@ -18,9 +18,8 @@ function Home() {
                 onClick={() => {
                     const fetchLogout = async () => {
                         try{
-                            await api.post('/logout');
+                            await api.post('/auth/logout');
                             logout();
-                            navigate("/login", {replace: true});
                         } catch {}
                     }
                     fetchLogout();
@@ -31,11 +30,17 @@ function Home() {
             <button 
                 className="btn btn-primary mt-3" 
                 onClick={() => {
-                    localStorage.removeItem("user");
-                    navigate("/login", {replace: true});
+                    const fetchTest = async () => {
+                        try {
+                            const response = await api.get("/test");
+                            console.log(response.data);
+                        } catch {}
+                    };
+
+                    fetchTest();
                 }}
             >
-                Logout
+                Test
             </button>
         </div>
     </div>

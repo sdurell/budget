@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 import api from "../services/api.js";
 
 const AuthContext = createContext(null);
@@ -7,20 +7,20 @@ export const AuthProvider = ({ children }) => {
     // null = not logged in
     const [token, setToken] = useState();
 
-    useEffect(() => {
-        const fetchToken = async () => {
-            try{
-                const response = await api.post("/auth/refresh", {}, {
-                    withCredentials: true
-                });
-                setToken(response.data.accessToken);
-            } catch {
-                setToken(null);
-            }
-        }
+    // useEffect(() => {
+    //     const fetchToken = async () => {
+    //         try{
+    //             const response = await api.post("/auth/refresh", {}, {
+    //                 withCredentials: true
+    //             });
+    //             setToken(response.data.accessToken);
+    //         } catch {
+    //             setToken(null);
+    //         }
+    //     }
 
-        fetchToken();
-    }, []);
+    //     fetchToken();
+    // }, []);
 
     useLayoutEffect(() => {
         const authInterceptor = api.interceptors.request.use((config) => {
@@ -42,10 +42,7 @@ export const AuthProvider = ({ children }) => {
             async (error) => {
                 const originalRequest = error.config;
                 if (error.response) {
-                    if (
-                        error.response.status === 401 &&
-                        error.response.data.message === 'Unauthorized'
-                    ) {
+                    if (error.response.status === 401) {
                         try {
                             const response = await api.post('auth/refresh', {}, {
                                 withCredentials: true
@@ -70,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         return () => {
             api.interceptors.response.eject(refreshInterceptor);
         }
-    });
+    }, []);
 
     const login = (tokenData) => setToken(tokenData);
 
