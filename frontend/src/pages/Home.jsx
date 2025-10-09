@@ -1,36 +1,35 @@
-import TestButton from "../components/TestButton";
-import { useAuth } from "../contexts/AuthContext";
-import api from "../services/api";
+import { Col, Container, Row } from "react-bootstrap";
+import SpendingPie from "../components/SpendingPie";
+import TransactionTable from "../components/TransactionTable";
+import { useUser } from "../contexts/UserContext";
 
 function Home() {
-    const { logout } = useAuth();
+    const { user, userLoading, transactionsLoading, chartLoading } = useUser();
+
+    const dataLoading = transactionsLoading || chartLoading;  
 
     return (
-    <div className="home container mt-5">
-        <div className="text-center">
-            <h1 className="display-4 mb-4">
-                Home Page
-            </h1>
-            <p className="lead">
-                Hello! If you are not logged in, you should not be here!
-            </p>
-            <button 
-                className="btn btn-danger mt-3" 
-                onClick={() => {
-                    const fetchLogout = async () => {
-                        try{
-                            await api.post('/auth/logout');
-                            logout();
-                        } catch {}
-                    }
-                    fetchLogout();
-                }}
-            >
-                Logout
-            </button>
-            <TestButton/>
-        </div>
-    </div>
+        <Container fluid="lg" className="mt-5">
+            <Row>
+                <Col className="text-center display-3 mb-4">
+                    { userLoading ? `` : `Hello ${user.username}!`}
+                </Col>
+            </Row>
+            <Row className="mt-5 mb-5">
+                {/* Todo: Show spinner if data takes a while to load. Below shows spinner for a split second every load which is ugly */}
+                {/* { dataLoading ? (<MySpinner/>) : ( */}
+                { dataLoading ? "" : (
+                    <>
+                        <Col md="5">
+                            <SpendingPie/>
+                        </Col>
+                        <Col md="7">
+                            <TransactionTable/>
+                        </Col>
+                    </>
+                )}
+            </Row>
+        </Container>
     )
 }
 
