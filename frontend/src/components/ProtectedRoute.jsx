@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 import { Loader } from '@mantine/core';
-=======
-import React from "react";
->>>>>>> 8e8c8a94622253208c309a83a9d255fb9ede857c
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function ProtectedRoute({ children }) {
-<<<<<<< HEAD
     const { token, initializing } = useAuth();
     const location = useLocation();
 
@@ -18,12 +13,6 @@ function ProtectedRoute({ children }) {
     );
 
     if (!token ){
-=======
-    const { user } = useAuth();
-    const location = useLocation();
-
-    if (!user ){
->>>>>>> 8e8c8a94622253208c309a83a9d255fb9ede857c
         return (
             <Navigate to="/login" state={{ from: location }} replace />
         );
