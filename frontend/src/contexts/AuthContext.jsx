@@ -1,26 +1,33 @@
-import { createContext, useContext, useLayoutEffect, useState } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import api from "../services/api.js";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    // null = not logged in
+    // null = not logged in, undefined = still checking (initializing)
     const [token, setToken] = useState();
+    const [initializing, setInitializing] = useState(true);
+    const didRun = useRef(false);
 
-    // useEffect(() => {
-    //     const fetchToken = async () => {
-    //         try{
-    //             const response = await api.post("/auth/refresh", {}, {
-    //                 withCredentials: true
-    //             });
-    //             setToken(response.data.accessToken);
-    //         } catch {
-    //             setToken(null);
-    //         }
-    //     }
+    // Try to restore session on first load
+    useEffect(() => {
+        if (didRun.current) return;
+        didRun.current = true;
 
-    //     fetchToken();
-    // }, []);
+        const fetchToken = async () => {
+            try {
+                const response = await api.post("/auth/refresh", {}, {
+                    withCredentials: true,
+                });
+                setToken(response.data.accessToken);
+            } catch {
+                setToken(null);
+            } finally {
+                setInitializing(false);
+            }
+        };
+        fetchToken();
+    }, []);
 
     useLayoutEffect(() => {
         const authInterceptor = api.interceptors.request.use((config) => {
@@ -41,21 +48,24 @@ export const AuthProvider = ({ children }) => {
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-                if (error.response) {
+                if (
+                    error.response &&
+                    !originalRequest._retry && 
+                    !originalRequest.url.includes("/auth/refresh")
+                ) {
                     if (error.response.status === 401) {
+                        originalRequest._retry = true;
                         try {
-                            const response = await api.post('auth/refresh', {}, {
+                            const response = await api.post('/auth/refresh', {}, {
                                 withCredentials: true
                             });
     
                             setToken(response.data.accessToken);
-    
                             originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`
-                            originalRequest._retry = true;
-    
                             return api(originalRequest);
                         } catch {
                             setToken(null);
+                            return Promise.reject(error);
                         }
                     }
                 }
@@ -76,7 +86,8 @@ export const AuthProvider = ({ children }) => {
     const value = {
         token,
         login,
-        logout
+        logout,
+        initializing,
     }
 
     return (

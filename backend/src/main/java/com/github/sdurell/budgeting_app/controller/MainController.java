@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/api/test")
 public class MainController {
     
-    @GetMapping("/")
+    @GetMapping()
     public String getMethodName() {
         return "Auth worked!!!!";
     }

@@ -1,3 +1,4 @@
+import TestButton from "../components/TestButton";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
 
@@ -27,21 +28,7 @@ function Home() {
             >
                 Logout
             </button>
-            <button 
-                className="btn btn-primary mt-3" 
-                onClick={() => {
-                    const fetchTest = async () => {
-                        try {
-                            const response = await api.get("/test");
-                            console.log(response.data);
-                        } catch {}
-                    };
-
-                    fetchTest();
-                }}
-            >
-                Test
-            </button>
+            <TestButton/>
         </div>
     </div>
     )

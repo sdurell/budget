@@ -1,10 +1,12 @@
+import { Loader } from '@mantine/core';
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import TestButton from "../components/TestButton";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
 
 function Login() {
-    const { login } = useAuth();
+    const { token, initializing, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -16,15 +18,20 @@ function Login() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    // Don't show login page if user is already authenticated
+    if (initializing) return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <Loader color="blue" size="lg" type="dots" />
+            </div>
+        );
+    if (token) return <Navigate to={from} replace />;
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         setLoading(true);
         try {
-            // const response = await api.post("/auth/login", JSON.stringify({username, password}, {
-            //     withCredentials: true
-            // }));
-            
             const response = await api.post("/auth/login",
                 JSON.stringify({username, password}),
                 {
@@ -69,6 +76,7 @@ function Login() {
                         {loading ? "Loading..." : "Login"}
                     </button>
                 </form>
+                <TestButton/>
             </div>
         </div>
     )
