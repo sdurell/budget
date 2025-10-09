@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import api from "../services/api.js";
+=======
+import { createContext, useContext, useEffect, useState } from "react";
+>>>>>>> 8e8c8a94622253208c309a83a9d255fb9ede857c
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+<<<<<<< HEAD
     // null = not logged in, undefined = still checking (initializing)
     const [token, setToken] = useState();
     const [initializing, setInitializing] = useState(true);
@@ -88,6 +93,34 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         initializing,
+=======
+    // null = not logged in
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem("user")
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+
+        if (storedUser) setUser(JSON.parse(storedUser));
+    }, []);
+
+    useEffect(() => {
+        if (user !== null){
+            localStorage.setItem('user', JSON.stringify(user))
+        }
+    }, [user]);
+
+    const login = (userData) => setUser(userData);
+
+    const logout = () => setUser(null);
+
+    const value = {
+        user,
+        login,
+        logout
+>>>>>>> 8e8c8a94622253208c309a83a9d255fb9ede857c
     }
 
     return (
