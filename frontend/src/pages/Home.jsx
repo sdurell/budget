@@ -1,6 +1,4 @@
-import TestButton from "../components/TestButton";
 import { useAuth } from "../contexts/AuthContext";
-import api from "../services/api";
 
 function Home() {
     const { logout } = useAuth();
@@ -14,21 +12,6 @@ function Home() {
             <p className="lead">
                 Hello! If you are not logged in, you should not be here!
             </p>
-            <button 
-                className="btn btn-danger mt-3" 
-                onClick={() => {
-                    const fetchLogout = async () => {
-                        try{
-                            await api.post('/auth/logout');
-                            logout();
-                        } catch {}
-                    }
-                    fetchLogout();
-                }}
-            >
-                Logout
-            </button>
-            <TestButton/>
         </div>
     </div>
     )

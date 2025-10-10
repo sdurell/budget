@@ -1,9 +1,10 @@
+import { Button } from "react-bootstrap";
 import api from "../services/api";
 
 function TestButton() {
     return (
-        <button
-            className="btn btn-primary mt-3"
+        <Button
+            className="btn btn-primary"
             onClick={() => {
                 const fetchTest = async () => {
                     try {
@@ -16,7 +17,7 @@ function TestButton() {
             }}
         >
             Test
-        </button>
+        </Button>
     );
 };
 
