@@ -1,19 +1,25 @@
-import { useAuth } from "../contexts/AuthContext";
+import { Col, Container, Row } from "react-bootstrap";
+import { LoremIpsum } from "react-lorem-ipsum";
+import SpendingPie from "../components/SpendingPie";
 
 function Home() {
-    const { logout } = useAuth();
 
     return (
-    <div className="home container mt-5">
-        <div className="text-center">
-            <h1 className="display-4 mb-4">
-                Home Page
-            </h1>
-            <p className="lead">
-                Hello! If you are not logged in, you should not be here!
-            </p>
-        </div>
-    </div>
+        <Container fluid="lg" className="mt-5">
+            <Row>
+                <Col className="text-center display-3 mb-4">
+                    Hello (username)!
+                </Col>
+            </Row>
+            <Row className="mt-5">
+                <Col lg="5">
+                    <SpendingPie/>
+                </Col>
+                <Col className="text-left">
+                    <LoremIpsum p="1"/>
+                </Col>
+            </Row>
+        </Container>
     )
 }
 

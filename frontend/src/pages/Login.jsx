@@ -76,7 +76,7 @@ function Login() {
                         {loading ? "Loading..." : "Login"}
                     </button>
                 </form>
-                <TestButton/>
+                <div className="mt-2"><TestButton/></div>
             </div>
         </div>
     )

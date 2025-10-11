@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import MyNavbar from "./components/MyNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
+import { TransactionProvider } from './contexts/TransactionContext';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
@@ -28,7 +29,9 @@ function App() {
           {/* Private route */}
           <Route path="/" element={
             <ProtectedRoute>
-              <Home />
+              <TransactionProvider>
+                <Home />
+              </TransactionProvider>
             </ProtectedRoute>
           }
           />
