@@ -1,4 +1,3 @@
-import { Loader } from '@mantine/core';
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import TestButton from "../components/TestButton";
@@ -18,12 +17,12 @@ function Login() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Don't show login page if user is already authenticated
-    if (initializing) return (
-            <div className="d-flex justify-content-center align-items-center vh-100">
-                <Loader color="blue" size="lg" type="dots" />
-            </div>
-        );
+    // // Don't show login page if user is already authenticated
+    // if (initializing) return (
+    //         <div className="d-flex justify-content-center align-items-center vh-100">
+    //             <Loader color="blue" size="lg" type="dots" />
+    //         </div>
+    //     );
     if (token) return <Navigate to={from} replace />;
 
 

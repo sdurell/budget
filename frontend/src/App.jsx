@@ -1,5 +1,4 @@
-import { Loader, MantineProvider } from '@mantine/core';
-import '@mantine/core/styles.css';
+import { Spinner } from "react-bootstrap";
 import { Route, Routes, useLocation } from "react-router-dom";
 import MyNavbar from "./components/MyNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -15,13 +14,18 @@ function App() {
   const hideNavbarRoutes = ["/login"];
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname) && !initializing && token; // added token to avoid showing when switch from home -> login (route isnt /login yet)
 
+  if (initializing) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <Spinner animation="border" variant="info" style={{width:"3rem", height:"3rem", "--bs-spinner-border-width": "0.5rem"}}/>
+      </div>
+    );
+  }
+
   return (
-    <MantineProvider>
+    <div>
       {shouldShowNavbar && <MyNavbar />}
       <main className="main-content">
-        {/* display spinner if initializing */}
-        {initializing && 
-        <div className="d-flex justify-content-center align-items-center vh-100"><Loader color="blue" size="lg" /></div>}
         <Routes>
           {/* Public route */}
           <Route path="/login" element={<Login />}/>
@@ -37,7 +41,7 @@ function App() {
           />
         </Routes>
       </main>
-    </MantineProvider>
+    </div>
   )
 }
 
