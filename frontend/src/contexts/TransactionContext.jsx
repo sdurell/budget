@@ -4,7 +4,7 @@ import api from "../services/api.js";
 const TransactionContext = createContext(null);
 
 export const TransactionProvider = ({ children }) => {
-    // const [transactions, setTransactions] = useState([]);
+    const [transactions, setTransactions] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [chartLoading, setChartLoading] = useState(true);
     // const didRun = useRef(false);
@@ -13,13 +13,13 @@ export const TransactionProvider = ({ children }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const response = await api.get("/transactions/summary");
-                // setTransactions(response.data);
-                const response = await api.get("/transactions/chart");
-                setChartData(response.data);
+                const transactionResponse = await api.get("/transactions/summary");
+                setTransactions(transactionResponse.data);
+                const chartResponse = await api.get("/transactions/chart");
+                setChartData(chartResponse.data);
             }
             catch {
-                // setTransactions([]);
+                setTransactions([]);
                 setChartData([]);
             }
             finally {
@@ -34,7 +34,7 @@ export const TransactionProvider = ({ children }) => {
     // const logout = () => setToken(null);
 
     const value = {
-        // transactions,
+        transactions,
         chartData,
         chartLoading,
     }

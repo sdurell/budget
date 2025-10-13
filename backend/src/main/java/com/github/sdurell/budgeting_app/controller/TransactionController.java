@@ -30,7 +30,11 @@ public class TransactionController {
 
     @GetMapping("/chart")
     public List<ChartDto> getChartData(){
-        return transactionRepository.getChartSummary();
+        return transactionRepository.getChartSummary()
+            .stream()
+            .filter(s -> !s.getCategory().equals("Payment"))
+            .map(s -> new ChartDto(s.getCategory(), s.getTotal().abs()))
+            .toList();
     }
     
 }

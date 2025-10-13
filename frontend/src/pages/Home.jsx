@@ -1,6 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
-import { LoremIpsum } from "react-lorem-ipsum";
 import SpendingPie from "../components/SpendingPie";
+import TransactionTable from "../components/TransactionTable";
 
 function Home() {
 
@@ -12,11 +12,12 @@ function Home() {
                 </Col>
             </Row>
             <Row className="mt-5">
-                <Col lg="5">
+                <Col md="5">
                     <SpendingPie/>
                 </Col>
-                <Col className="text-left">
-                    <LoremIpsum p="1"/>
+                <Col md="7">
+                    {/* <LoremIpsum p="1"/> */}
+                    <TransactionTable/>
                 </Col>
             </Row>
         </Container>

@@ -1,10 +1,8 @@
-import { ArcElement, Chart as ChartJS, Colors, Legend, Tooltip } from "chart.js";
-import React from "react";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { useTransaction } from "../contexts/TransactionContext";
 
 ChartJS.register(ArcElement, Legend, Tooltip);
-ChartJS.register(Colors);
 
 function SpendingPie(){
     const { chartData, chartLoading } = useTransaction();
@@ -17,10 +15,9 @@ function SpendingPie(){
             label: "Spending ($)",
             data: chartData.map(item => item.total),
             backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#4BC0C0"
+            "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+            "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
+            "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
             ],
             borderColor: "#fff",
             borderWidth: 2,
@@ -31,17 +28,17 @@ function SpendingPie(){
     const options = {
         responsive: true,
         plugins: {
-        legend: {
-            position: "bottom",
-        },
-        tooltip: {
-            callbacks: {
-            label: (tooltipItem) => {
-                const value = tooltipItem.raw;
-                return `$${value}`;
+            legend: {
+                position: "bottom",
             },
+            tooltip: {
+                callbacks: {
+                    label: (tooltipItem) => {
+                        const value = tooltipItem.raw;
+                        return `$${value}`;
+                    },
+                },
             },
-        },
         },
     };
 
