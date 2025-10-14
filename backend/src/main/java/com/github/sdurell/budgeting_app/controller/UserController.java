@@ -56,7 +56,7 @@ public class UserController {
 
         List<Transaction> transactions = transactionRepository.findByUserId(userId, sort);
         List<TransactionDto> dtos = transactions.stream()
-            .map(s -> new TransactionDto(s.getName(), s.getDate(), s.getAmount(), s.getCategory()))
+            .map(s -> new TransactionDto(s.getId(), s.getName(), s.getDate(), s.getAmount(), s.getCategory()))
             .toList();
 
         return ResponseEntity.ok(dtos);

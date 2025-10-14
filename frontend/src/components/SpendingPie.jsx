@@ -7,6 +7,10 @@ ChartJS.register(ArcElement, Legend, Tooltip);
 function SpendingPie(){
     const { chart } = useUser();
 
+    if(chart.length === 0){
+        return;
+    }
+
     // example data
     const data = {
         labels: chart.map(item => item.category),
