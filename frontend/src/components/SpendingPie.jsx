@@ -1,19 +1,19 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { useTransaction } from "../contexts/TransactionContext";
+import { useUser } from "../contexts/UserContext";
 
 ChartJS.register(ArcElement, Legend, Tooltip);
 
 function SpendingPie(){
-    const { chartData, chartLoading } = useTransaction();
+    const { chart } = useUser();
 
     // example data
     const data = {
-        labels: chartData.map(item => item.category),
+        labels: chart.map(item => item.category),
         datasets: [
         {
             label: "Spending ($)",
-            data: chartData.map(item => item.total),
+            data: chart.map(item => item.total),
             backgroundColor: [
             "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
             "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",

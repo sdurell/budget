@@ -2,7 +2,6 @@ import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import basketDollar from "../assets/basket-dollar.svg";
 import { useAuth } from "../contexts/AuthContext";
 import api from '../services/api';
-import TestButton from "./TestButton";
 
 function MyNavbar() {
     const { logout } = useAuth();
@@ -33,7 +32,6 @@ function MyNavbar() {
                         }}>
                         Logout
                     </Button>
-                    <TestButton/>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

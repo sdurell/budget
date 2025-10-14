@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,13 +19,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Transaction {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
+
     private String name;
     private Date date;
+    private String category;
+
     @Column(precision = 19, scale = 2)
     private BigDecimal amount;
-    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
 }

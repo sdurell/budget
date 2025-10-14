@@ -1,9 +1,9 @@
-import { Spinner } from "react-bootstrap";
 import { Route, Routes, useLocation } from "react-router-dom";
 import MyNavbar from "./components/MyNavbar";
+import MySpinner from "./components/MySpinner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
-import { TransactionProvider } from './contexts/TransactionContext';
+import { UserProvider } from './contexts/UserContext';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
@@ -16,9 +16,7 @@ function App() {
 
   if (initializing) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <Spinner animation="border" variant="info" style={{width:"3rem", height:"3rem", "--bs-spinner-border-width": "0.5rem"}}/>
-      </div>
+      <MySpinner/>
     );
   }
 
@@ -33,9 +31,9 @@ function App() {
           {/* Private route */}
           <Route path="/" element={
             <ProtectedRoute>
-              <TransactionProvider>
+              <UserProvider>
                 <Home />
-              </TransactionProvider>
+              </UserProvider>
             </ProtectedRoute>
           }
           />
