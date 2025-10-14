@@ -8,11 +8,11 @@
 		<version>3.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.github.sdurell</groupId>
-	<artifactId>budgeting_app</artifactId>
+	<groupId>com.sdurell</groupId>
+	<artifactId>budget</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>budgeting_app</name>
-	<description>Demo project for Spring Boot</description>
+	<name>budget</name>
+	<description>Manage transaction data across multiple statements</description>
 	<url/>
 	<licenses>
 		<license/>
