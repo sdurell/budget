@@ -1,4 +1,5 @@
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import { LinkContainer } from "react-router-bootstrap";
 import basketDollar from "../assets/basket-dollar.svg";
 import { useAuth } from "../contexts/AuthContext";
 import api from '../services/api';
@@ -15,8 +16,12 @@ function MyNavbar() {
                 <Navbar.Toggle aria-controls="navbar-nav"/>
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link disabled="true">Transactions</Nav.Link>
+                        <LinkContainer to="/">
+                            <Nav.Link>Home</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/statements">
+                            <Nav.Link>Statements</Nav.Link>
+                        </LinkContainer>
                         <Nav.Link disabled="true">Settings</Nav.Link>
                     </Nav>
                     <Button 
