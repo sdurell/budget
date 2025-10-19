@@ -1,18 +1,15 @@
-import { Route, Routes, useLocation } from "react-router-dom";
-import MyNavbar from "./components/MyNavbar";
+import { Route, Routes } from "react-router-dom";
 import MySpinner from "./components/MySpinner";
+import PrivatePage from "./components/PrivatePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
 import { UserProvider } from './contexts/UserContext';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Statements from "./pages/Statements";
 
 function App() {
-  const location = useLocation();
-  const { initializing, token } = useAuth();
-  // Define routes where Navbar should be hidden
-  const hideNavbarRoutes = ["/login"];
-  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname) && !initializing && token; // added token to avoid showing when switch from home -> login (route isnt /login yet)
+  const { initializing } = useAuth();
 
   if (initializing) {
     return (
@@ -21,25 +18,24 @@ function App() {
   }
 
   return (
-    <div>
-      {shouldShowNavbar && <MyNavbar />}
-      <main className="main-content">
-        <Routes>
-          {/* Public route */}
-          <Route path="/login" element={<Login />}/>
+    <>
+      <Routes>
+        {/* Public route */}
+        <Route path="/login" element={<Login />}/>
 
-          {/* Private route */}
-          <Route path="/" element={
-            <ProtectedRoute>
-              <UserProvider>
-                <Home />
-              </UserProvider>
-            </ProtectedRoute>
-          }
-          />
-        </Routes>
-      </main>
-    </div>
+        {/* Private routes */}
+        <Route element={
+          <ProtectedRoute>
+            <UserProvider>
+              <PrivatePage/>
+            </UserProvider>
+          </ProtectedRoute>
+        }>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/statements" element={<Statements/>}/>
+        </Route>
+      </Routes>
+    </>
   )
 }
 
