@@ -1,19 +1,32 @@
 services:
+  react-frontend:
+    image: budget/react-frontend:dev
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    command: npm run dev
   spring-api:
     image: budget/spring-api:dev
     build:
       context: .
-      dockerfile: spring-dockerfile.dev
+      dockerfile: ./backend/Dockerfile.dev
     ports:
       - "8080:8080"
     volumes:
-      - .:/app
+      - ./backend:/app
       - ~/.m2:/root/.m2    # caches Maven dependencies
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
-      SPRING_DATASOURCE_USERNAME: sdurell
-      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
     depends_on:
       - db
     command: mvn spring-boot:run
@@ -25,8 +38,8 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_DB: budget
-      POSTGRES_USER: sdurell
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     volumes:
       - local_pgdata:/var/lib/postgresql/data
   pgadmin:
@@ -37,7 +50,7 @@ services:
       - "8888:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: spencerdurell@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: 1234
+      PGADMIN_DEFAULT_PASSWORD: password
     volumes:
       - pgadmin-data:/var/lib/pgadmin
   
