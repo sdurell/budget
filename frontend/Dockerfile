@@ -1,4 +1,4 @@
-FROM node:24.10.0
+FROM node:24.10.0-alpine
 WORKDIR /usr/src/frontend
 COPY package*.json ./
 RUN npm install

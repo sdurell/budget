@@ -1,0 +1,7 @@
+FROM maven:3.9-eclipse-temurin-21
+WORKDIR /usr/src/backend
+COPY ./backend/pom.xml ./
+RUN mvn dependency:go-offline
+COPY ./backend/src ./src
+EXPOSE 8000
+CMD ["mvn", "spring-boot:run"]

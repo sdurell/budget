@@ -1,4 +1,22 @@
 services:
+  spring-api:
+    image: budget/spring-api:dev
+    build:
+      context: .
+      dockerfile: spring-dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2    # caches Maven dependencies
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget
+      SPRING_DATASOURCE_USERNAME: sdurell
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - db
+    command: mvn spring-boot:run
   db:
     image: postgres
     container_name: local_pgdb
@@ -6,6 +24,7 @@ services:
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_DB: budget
       POSTGRES_USER: sdurell
       POSTGRES_PASSWORD: 1234
     volumes:
