@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "CHOKIDAR_USEPOLLING=true react-scripts start",
-    "dev": "CHOKIDAR_USEPOLLING=true vite",
+    "dev": "CHOKIDAR_USEPOLLING=true vite --host 0.0.0.0",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
