@@ -7,6 +7,8 @@ export const AuthProvider = ({ children }) => {
     // null = not logged in, undefined = still checking (initializing)
     const [token, setToken] = useState();
     const [initializing, setInitializing] = useState(true);
+    const [initNetworkErr, setInitNetworkErr] = useState(false);
+    const [midSessionNetworkErr, setMidSessionNetworkErr] = useState(false); 
     const didRun = useRef(false);
 
     // Try to restore session on first load
@@ -20,7 +22,10 @@ export const AuthProvider = ({ children }) => {
                     withCredentials: true,
                 });
                 setToken(response.data.accessToken);
-            } catch {
+            } catch (error) {
+                if (error.code === "ERR_NETWORK" || error.message === "Network Error"){
+                    setInitNetworkErr(true);
+                }
                 setToken(null);
             } finally {
                 setInitializing(false);
@@ -45,9 +50,14 @@ export const AuthProvider = ({ children }) => {
 
     useLayoutEffect(() => {
         const refreshInterceptor = api.interceptors.response.use(
-            (response) => response,
+            async (response) => {
+                // remove alert if connection to backend is restored
+                setMidSessionNetworkErr(false);
+                return response
+            },
             async (error) => {
                 const originalRequest = error.config;
+                // unauthorized
                 if (
                     error.response &&
                     !originalRequest._retry && 
@@ -69,6 +79,10 @@ export const AuthProvider = ({ children }) => {
                         }
                     }
                 }
+                // cant connect to backend
+                else if (error.code === "ERR_NETWORK" || error.message === "Network Error"){
+                    setMidSessionNetworkErr(true);
+                }
 
                 return Promise.reject(error);
             },
@@ -88,6 +102,9 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         initializing,
+        initNetworkErr,
+        midSessionNetworkErr,
+        setMidSessionNetworkErr
     }
 
     return (
