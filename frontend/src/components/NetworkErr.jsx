@@ -10,16 +10,18 @@ export default function NetworkErr(){
     useEffect(() => {
         const fetchLiveness = async () => {
             try {
-                const response = await api.get("/auth/liveness");
+                await api.get("/auth/liveness");
                 window.location.reload();
             } catch {
                 setSeconds(prev => {
-                    return prev * 2 > LIMIT ? (prev === LIMIT ? LIMIT + 1 : LIMIT ) : prev * 2;
+                    return prev * 2 > LIMIT 
+                        ? (prev === LIMIT ? LIMIT + 1 : LIMIT ) 
+                        : prev * 2;
                 });
             }
         }
-        console.log(seconds);
-        setTimeout(fetchLiveness, seconds * 1000);
+        const timeout = setTimeout(fetchLiveness, seconds * 1000);
+        return () => clearTimeout(timeout);
     }, [seconds])
 
 
@@ -36,36 +38,5 @@ export default function NetworkErr(){
                 </Button>
             </div>
         </Container>    
-
-
-
-        // <div className="container d-flex justify-content-center align-items-center" style={{ height: "75vh" }}>
-        //     <div className="text-center border rounded p-4 shadow-sm bg-white">
-        //         <h2>Welcome Back!</h2>
-        //         <p>Please login</p>
-        //         <form onSubmit={handleSubmit}>
-        //             <input 
-        //                 type="text"
-        //                 className="form-control my-2"
-        //                 placeholder="Username"
-        //                 value={username}
-        //                 onChange={(e) => setUsername(e.target.value)}
-        //                 required
-        //             />
-        //             <input
-        //                 type="password"
-        //                 className="form-control my-2"
-        //                 placeholder="Password"
-        //                 value={password}
-        //                 onChange={(e) => setPassword(e.target.value)}
-        //                 required
-        //             />
-        //             {error && <p className="text-danger">{error}</p>}
-        //             <button type="submit" className="btn btn-primary w-100 mb-4 mt-2" disabled={loading}>
-        //                 {loading ? "Loading..." : "Login"}
-        //             </button>
-        //         </form>
-        //     </div>
-        // </div>
     );
 };
