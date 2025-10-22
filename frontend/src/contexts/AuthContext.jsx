@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
     // null = not logged in, undefined = still checking (initializing)
     const [token, setToken] = useState();
     const [initializing, setInitializing] = useState(true);
+    const [networkErr, setNetworkErr] = useState(false);
     const didRun = useRef(false);
 
     // Try to restore session on first load
@@ -20,7 +21,10 @@ export const AuthProvider = ({ children }) => {
                     withCredentials: true,
                 });
                 setToken(response.data.accessToken);
-            } catch {
+            } catch (error) {
+                if (error.code === "ERR_NETWORK"){
+                    setNetworkErr(true);
+                }
                 setToken(null);
             } finally {
                 setInitializing(false);
@@ -88,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         initializing,
+        networkErr
     }
 
     return (

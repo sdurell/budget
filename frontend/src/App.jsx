@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import MySpinner from "./components/MySpinner";
+import NetworkErr from "./components/NetworkErr";
 import PrivatePage from "./components/PrivatePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./contexts/AuthContext";
@@ -9,11 +10,17 @@ import Login from "./pages/Login";
 import Statements from "./pages/Statements";
 
 function App() {
-  const { initializing } = useAuth();
+  const { initializing, networkErr } = useAuth();
 
   if (initializing) {
     return (
       <MySpinner/>
+    );
+  }
+
+  if (networkErr) {
+    return (
+      <NetworkErr/>
     );
   }
 
