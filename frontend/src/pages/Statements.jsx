@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, ListGroup, Row, Toast, ToastContainer } from "react-bootstrap";
 import StatementItem from "../components/StatementItem";
+import UploadModal from "../components/UploadModal";
 import { useUser } from "../contexts/UserContext";
 
 function Statements() {
+    const [showUpload, setShowUpload] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const { user, userLoading } = useUser();
     const [ data, setData ] = useState([
         {id: "1", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
@@ -24,6 +27,7 @@ function Statements() {
     };
 
     return (
+    <>
         <Container fluid="lg" className="mt-md-5 mt-4">
             <Row className="align-items-center">
                 <Col sm={12} md={9}>
@@ -32,7 +36,9 @@ function Statements() {
                 </Col>
                 <Col sm={12} md={3} className="text-md-end ">
                     <ButtonGroup size="lg">
-                        <Button variant="dark">Upload</Button>
+                        <Button variant="dark" onClick={() => setShowUpload(true)}>
+                            Upload
+                        </Button>
                         <Button 
                             disabled={idChecked.length === 0}
                             variant="dark"
@@ -61,6 +67,13 @@ function Statements() {
                 </Col>
             </Row>
         </Container>
+        <UploadModal show={showUpload} setShow={setShowUpload} setShowToast={setShowToast}/>
+        <ToastContainer position="bottom-center">
+            <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
+                <Toast.Body>Statement uploaded successfully!</Toast.Body>
+            </Toast>
+        </ToastContainer>
+    </>
     )
 }
 

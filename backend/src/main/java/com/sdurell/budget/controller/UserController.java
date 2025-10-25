@@ -2,8 +2,6 @@ package com.sdurell.budget.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,19 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sdurell.budget.dto.ChartDto;
 import com.sdurell.budget.dto.TransactionDto;
 import com.sdurell.budget.dto.UserDto;
-import com.sdurell.budget.model.Transaction;
 import com.sdurell.budget.model.UserEntity;
 import com.sdurell.budget.repository.TransactionRepository;
 import com.sdurell.budget.repository.UserRepository;
 import com.sdurell.budget.security.CustomUserDetails;
-import com.sdurell.budget.security.CustomUserDetailsService;
 
 @RestController
 @RequestMapping("/api/users/me")
 public class UserController {
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
 
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
@@ -49,15 +42,17 @@ public class UserController {
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionDto>> getTransactions(Authentication authentication) {
         // Get user from security context
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
-        // define sort
-        Sort sort = Sort.by(Sort.Order.desc("date"), Sort.Order.asc("name"));
+        // CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        // Long userId = userDetails.getId();
+        // // define sort
+        // Sort sort = Sort.by(Sort.Order.desc("date"), Sort.Order.asc("name"));
 
-        List<Transaction> transactions = transactionRepository.findByUserId(userId, sort);
-        List<TransactionDto> dtos = transactions.stream()
-            .map(s -> new TransactionDto(s.getId(), s.getName(), s.getDate(), s.getAmount(), s.getCategory()))
-            .toList();
+        // List<Transaction> transactions = transactionRepository.findByUserId(userId, sort);
+        // List<TransactionDto> dtos = transactions.stream()
+        //     .map(s -> new TransactionDto(s.getId(), s.getName(), s.getDate(), s.getAmount(), s.getCategory()))
+        //     .toList();
+
+        List<TransactionDto> dtos = List.of(new TransactionDto());
 
         return ResponseEntity.ok(dtos);
     }
@@ -67,12 +62,12 @@ public class UserController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        List<ChartDto> dtos = transactionRepository.getUserChart(userId)
-            .stream()
-            .filter(s -> !s.getCategory().equals("Payment"))
-            .map(s -> new ChartDto(s.getCategory(), s.getTotal().abs()))
-            .toList(); 
+        // List<ChartDto> dtos = transactionRepository.getUserChart(userId)
+        //     .stream()
+        //     .filter(s -> !s.getCategory().equals("Payment"))
+        //     .map(s -> new ChartDto(s.getCategory(), s.getTotal().abs()))
+            // .toList();
+        List<ChartDto> dtos = List.of(new ChartDto()); 
         return ResponseEntity.ok(dtos);
     }
-    
 }

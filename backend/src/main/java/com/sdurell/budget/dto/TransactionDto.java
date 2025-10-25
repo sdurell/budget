@@ -5,10 +5,13 @@ import java.sql.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sdurell.budget.config.TwoDecimalSerializer;
+import com.sdurell.budget.model.Transaction;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class TransactionDto {
     private Long id;
     private String name;
@@ -23,5 +26,25 @@ public class TransactionDto {
         this.date = date;
         this.amount = amount;
         this.category = category;
+    }
+
+    public Transaction toEntity() {
+        Transaction transaction = new Transaction(); 
+        transaction.setId(this.id);
+        transaction.setName(this.name);
+        transaction.setDate(this.date);
+        transaction.setAmount(this.amount);
+        transaction.setCategory(this.category);
+        return transaction;
+    }
+
+    public static TransactionDto fromEntity(Transaction transaction) {
+        TransactionDto dto = new TransactionDto();
+        dto.setId(transaction.getId());
+        dto.setName(transaction.getName());
+        dto.setDate(transaction.getDate());
+        dto.setAmount(transaction.getAmount());
+        dto.setCategory(transaction.getCategory());
+        return dto;
     }
 }
