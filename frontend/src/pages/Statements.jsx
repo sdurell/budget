@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
 import StatementItem from "../components/StatementItem";
 import { useUser } from "../contexts/UserContext";
 
 function Statements() {
+    const [show, setShow] = useState(false);
+    const [files, setFiles] = useState([]);
+
     const { user, userLoading } = useUser();
     const [ data, setData ] = useState([
         {id: "1", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
@@ -24,6 +27,7 @@ function Statements() {
     };
 
     return (
+    <>
         <Container fluid="lg" className="mt-md-5 mt-4">
             <Row className="align-items-center">
                 <Col sm={12} md={9}>
@@ -32,7 +36,9 @@ function Statements() {
                 </Col>
                 <Col sm={12} md={3} className="text-md-end ">
                     <ButtonGroup size="lg">
-                        <Button variant="dark">Upload</Button>
+                        <Button variant="dark" onClick={() => setShow(true)}>
+                            Upload
+                        </Button>
                         <Button 
                             disabled={idChecked.length === 0}
                             variant="dark"
@@ -61,6 +67,40 @@ function Statements() {
                 </Col>
             </Row>
         </Container>
+        <Modal show={show} onHide={() => setShow(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Upload</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>
+                    Use this to submit your financial statements to the system. 
+                    Your statements will be used to build your financial history.
+                </p>
+                <Form>
+                    <Form.Group as={Row} controlId="formFileMultiple" className="mb-3">
+                        <Form.Label column sm="3">Upload csv</Form.Label>
+                        <Col sm="9">
+                            <Form.Control 
+                                type="file" 
+                                multiple
+                                onChange={(e) => {
+                                    const file = e.target.files
+                                    console.log(file)
+                                }}/>
+                        </Col>
+                    </Form.Group>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShow(false)}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={() => setShow(false)}>
+                    Submit
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    </>
     )
 }
 
