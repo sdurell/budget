@@ -5,7 +5,6 @@ import { useUser } from "../contexts/UserContext";
 
 function Statements() {
     const [show, setShow] = useState(false);
-    const [files, setFiles] = useState([]);
 
     const { user, userLoading } = useUser();
     const [ data, setData ] = useState([
@@ -24,6 +23,15 @@ function Statements() {
         setIdChecked(prev => 
             checked ? [...prev, id] : prev.filter(s => s !== id)
         )
+    };
+
+    function handleSubmit(e) {
+        const fileList = e.target.files.filter(f => f.type ==="text/csv")
+        if(fileList.length === 0) {
+            // should display error if no csv
+        }
+        
+
     };
 
     return (
@@ -95,7 +103,7 @@ function Statements() {
                 <Button variant="secondary" onClick={() => setShow(false)}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={() => setShow(false)}>
+                <Button variant="primary" onClick={handleSubmit(e)}>
                     Submit
                 </Button>
             </Modal.Footer>
