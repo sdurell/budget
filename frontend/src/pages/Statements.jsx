@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Container, Form, ListGroup, Modal, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, ListGroup, Row } from "react-bootstrap";
 import StatementItem from "../components/StatementItem";
+import UploadModal from "../components/UploadModal";
 import { useUser } from "../contexts/UserContext";
 
 function Statements() {
     const [show, setShow] = useState(false);
-
     const { user, userLoading } = useUser();
     const [ data, setData ] = useState([
         {id: "1", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
@@ -23,15 +23,6 @@ function Statements() {
         setIdChecked(prev => 
             checked ? [...prev, id] : prev.filter(s => s !== id)
         )
-    };
-
-    function handleSubmit(e) {
-        const fileList = e.target.files.filter(f => f.type ==="text/csv")
-        if(fileList.length === 0) {
-            // should display error if no csv
-        }
-        
-
     };
 
     return (
@@ -75,39 +66,7 @@ function Statements() {
                 </Col>
             </Row>
         </Container>
-        <Modal show={show} onHide={() => setShow(false)}>
-            <Modal.Header closeButton>
-                <Modal.Title>Upload</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p>
-                    Use this to submit your financial statements to the system. 
-                    Your statements will be used to build your financial history.
-                </p>
-                <Form>
-                    <Form.Group as={Row} controlId="formFileMultiple" className="mb-3">
-                        <Form.Label column sm="3">Upload csv</Form.Label>
-                        <Col sm="9">
-                            <Form.Control 
-                                type="file" 
-                                multiple
-                                onChange={(e) => {
-                                    const file = e.target.files
-                                    console.log(file)
-                                }}/>
-                        </Col>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShow(false)}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={handleSubmit(e)}>
-                    Submit
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <UploadModal show={show} setShow={setShow}/>
     </>
     )
 }

@@ -74,5 +74,4 @@ public class UserController {
             .toList(); 
         return ResponseEntity.ok(dtos);
     }
-    
 }
