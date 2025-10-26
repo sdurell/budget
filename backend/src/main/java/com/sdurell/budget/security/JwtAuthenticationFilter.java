@@ -1,6 +1,7 @@
 package com.sdurell.budget.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -24,12 +25,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    private static final List<String> PUBLIC_ENDPOINTS = List.of(
+        "/api/auth/login",
+        "/api/auth/register",
+        "/api/auth/refresh",
+        "/api/auth/liveness",
+        "/api/auth/logout"
+    );
+
     @Override
     protected void doFilterInternal(
         @NonNull HttpServletRequest request,
         @NonNull HttpServletResponse response, 
         @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getServletPath();
+        if(PUBLIC_ENDPOINTS.stream().anyMatch(path::endsWith)){
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = getJwtFromRequest(request);
         if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)) {

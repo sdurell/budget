@@ -154,10 +154,10 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getName() != null){
-            userRepository.findByUsername(auth.getName()).ifPresent(user -> {
+    public ResponseEntity<Void> logout(@CookieValue(name = SecurityConstants.REFRESH_COOKIE_NAME, required = false) String refreshCookie) {
+
+        if (refreshCookie != null) {
+            refreshTokenService.verifyRefreshToken(refreshCookie).ifPresent(user -> {
                 refreshTokenService.revokeUserRefreshToken(user);
             });
         }

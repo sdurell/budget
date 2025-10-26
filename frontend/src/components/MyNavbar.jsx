@@ -29,7 +29,9 @@ function MyNavbar() {
                         onClick={() => {
                             const fetchLogout = async () => {
                                 try{
-                                    await api.post("/auth/logout");
+                                    await api.post("/auth/logout", {}, {
+                                        withCredentials: true,
+                                    });
                                     logout();
                                 } catch {}
                             }
