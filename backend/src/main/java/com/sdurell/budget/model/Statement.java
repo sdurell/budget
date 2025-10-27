@@ -1,6 +1,10 @@
 package com.sdurell.budget.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Statement {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     private String name;
@@ -25,11 +29,10 @@ public class Statement {
     private String month;
     private String filename;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany
-    @JoinColumn(name = "transaction_id")
-    private Transaction transactions;
+    @OneToMany(mappedBy = "statement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
 }
