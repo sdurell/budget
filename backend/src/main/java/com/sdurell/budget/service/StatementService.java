@@ -3,6 +3,8 @@ package com.sdurell.budget.service;
 import org.springframework.stereotype.Service;
 
 import com.sdurell.budget.dto.StatementDto;
+import com.sdurell.budget.exception.DuplicateFilenameException;
+import com.sdurell.budget.exception.UserNotFoundException;
 import com.sdurell.budget.model.Statement;
 import com.sdurell.budget.model.UserEntity;
 import com.sdurell.budget.repository.StatementRepository;
@@ -21,11 +23,11 @@ public class StatementService {
 
     public StatementDto createStatement(Long userId, StatementDto statementDto){
         if(statementRepository.existsByFilename(statementDto.getFilename())){
-            throw new IllegalArgumentException("Filename already exists");
+            throw new DuplicateFilenameException(statementDto.getFilename());
         }
 
         UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
+            .orElseThrow(() -> new UserNotFoundException(userId));
 
         Statement statement = statementDto.toEntity();
         statement.setUser(user);

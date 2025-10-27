@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Col, Container, ListGroup, Row } from "react-boots
 import StatementItem from "../components/StatementItem";
 import UploadModal from "../components/UploadModal";
 import { useUser } from "../contexts/UserContext";
+import api from "../services/api";
 
 function Statements() {
     const [show, setShow] = useState(false);
@@ -47,6 +48,27 @@ function Statements() {
                             }}
                         >
                             Delete
+                        </Button>
+                        <Button
+                            variant="dark"
+                            onClick={() => {
+                                const fetchD = async () => {
+                                    try{
+                                        const response = await api.post("/statements/create", {
+                                            "name": "dec_capital",
+                                            "company": "capitalone",
+                                            "month": "december",
+                                            "filename": "dec_caone.csv"
+                                        })
+                                        console.log(response.data)
+                                    } catch (err){
+                                        console.log(err.response.data.message)
+                                    }
+                                }
+                                fetchD();
+                            }}
+                        >
+                            Test
                         </Button>
                     </ButtonGroup>
                 </Col>
