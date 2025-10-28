@@ -70,15 +70,30 @@ export default function UploadModal({ show, setShow }){
                 <Modal.Title>Upload</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>
-                    Use this to submit your financial statements to the system. 
-                    Your statements will be used to build your financial history.
-                </p>
                 <Form>
+                    <Form.Group as={Row} controlId="formName" className="mb-3">
+                        <Form.Label column sm="3">Name</Form.Label>
+                        <Col sm="9">
+                            <Form.Control type="text" required/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="formCompany" className="mb-3">
+                        <Form.Label column sm="3">Company</Form.Label>
+                        <Col sm="9">
+                            <Form.Control type="text" required/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="formMonth" className="mb-3">
+                        <Form.Label column sm="3">Month</Form.Label>
+                        <Col sm="9">
+                            <Form.Control type="text" required/>
+                        </Col>
+                    </Form.Group>
                     <Form.Group as={Row} controlId="formFile" className="mb-3">
                         <Form.Label column sm="3">Upload csv</Form.Label>
                         <Col sm="9">
                             <Form.Control 
+                                required
                                 type="file"
                                 accept=".csv"
                                 onChange={(e) => handleFileChange(e)}/>
