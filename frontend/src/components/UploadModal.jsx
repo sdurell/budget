@@ -1,16 +1,24 @@
 import Papa from "papaparse";
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import api from "../services/api";
 
 const expectedHeaders = ["date", "name", "amount", "category"];
 
 export default function UploadModal({ show, setShow }){
     const [error, setError] = useState("");
-    const [data, setData] = useState(null);
+    const [validated, setValidated] = useState(false);
+
+    const [name, setName] = useState("");
+    const [company, setCompany] = useState("");
+    const [month, setMonth] = useState("");
+    const [filename, setFilename] = useState("");
+    const [transactions, setTransactions] = useState(null);
 
     // TODO: create a custom hook to handle csv validation
     function handleFileChange(e) {
-        setData(null);
+        setTransactions(null);
+        setFilename("");
         setError("");
         const file = e.target.files[0];
 
@@ -43,50 +51,104 @@ export default function UploadModal({ show, setShow }){
                     console.warn(`Extra columns: ${extra.join(", ")}`);
                 }
 
-                const invalid = data.filter(row => (
-                    isNaN(Number(row.amount)) || 
-                    isNaN(new Date(row.date)) || 
-                    !row.name.length || 
-                    !row.category.length
-                ))
+                const invalid = data.filter(row => {
+                    const parsedDate = new Date(row.date);
+                    return (
+                        isNaN(Number(row.amount)) || 
+                        isNaN(parsedDate.getTime()) || 
+                        !row.name.length || 
+                        !row.category.length
+                    )
+                });
 
                 if(invalid.length > 0){
                     setError(`Found ${invalid.length} invalid rows`);
                     return;
                 }
 
-                setData(data);
+                // change date to expected format for backend
+                data.map((row) => {
+                    row.date = new Date(row.date).toISOString().split("T")[0];
+                    return row;
+                })
+
+                setTransactions(data);
+                setFilename(file.name);
             }
         });
     };
 
-    function handleSubmit() {
-        console.log(data);
+    async function handleSubmit(e) {
+        const form = e.currentTarget;
+        e.preventDefault();
+
+        if(form.checkValidity() === false){
+            e.stopPropagation();
+        } else {
+            try{
+                const response = await api.post(
+                    "/statements/create",
+                    JSON.stringify({name, company, month, filename, transactions}),
+                    { withCredentials: true}
+                );
+                console.log("Form submitted: ", {name,company,month,transactions});
+            } catch(error) {
+                setError(error.message);
+            } 
+            
+        }
+
+        setValidated(true);
+    };
+
+    function handleClose() {
+        setShow(false);
+        setValidated(false);
+        setName("");
+        setCompany("");
+        setMonth("");
+        setTransactions(null);
+        setError("");
     };
 
     return(
-        <Modal show={show} onHide={() => setShow(false)}>
+        <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Upload</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form id="uploadForm" noValidate validated={validated} onSubmit={handleSubmit}>
                     <Form.Group as={Row} controlId="formName" className="mb-3">
                         <Form.Label column sm="3">Name</Form.Label>
                         <Col sm="9">
-                            <Form.Control type="text" required/>
+                            <Form.Control 
+                                type="text"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="formCompany" className="mb-3">
                         <Form.Label column sm="3">Company</Form.Label>
                         <Col sm="9">
-                            <Form.Control type="text" required/>
+                            <Form.Control 
+                                type="text" 
+                                required
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                            />
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="formMonth" className="mb-3">
                         <Form.Label column sm="3">Month</Form.Label>
                         <Col sm="9">
-                            <Form.Control type="text" required/>
+                            <Form.Control 
+                                type="text" 
+                                required
+                                value={month}
+                                onChange={(e) => setMonth(e.target.value)}
+                            />
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="formFile" className="mb-3">
@@ -103,10 +165,10 @@ export default function UploadModal({ show, setShow }){
                 {error && <p className="text-danger">{error}</p>}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShow(false)}>
+                <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={(e) => handleSubmit(e)}>
+                <Button variant="primary" type="submit" form="uploadForm">
                     Submit
                 </Button>
             </Modal.Footer>
