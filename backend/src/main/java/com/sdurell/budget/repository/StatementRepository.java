@@ -6,5 +6,5 @@ import com.sdurell.budget.model.Statement;
 
 public interface StatementRepository extends JpaRepository<Statement, Integer> {
 
-    Boolean existsByFilename(String filename);
+    Boolean existsByFilenameAndUserId(String filename, Long UserId);
 }

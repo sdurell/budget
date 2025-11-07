@@ -22,7 +22,7 @@ public class StatementService {
     }
 
     public StatementDto createStatement(Long userId, StatementDto statementDto){
-        if(statementRepository.existsByFilename(statementDto.getFilename())){
+        if(statementRepository.existsByFilenameAndUserId(statementDto.getFilename(), userId)){
             throw new DuplicateFilenameException(statementDto.getFilename());
         }
 

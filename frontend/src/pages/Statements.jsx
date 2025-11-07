@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Button, ButtonGroup, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, ListGroup, Row, Toast, ToastContainer } from "react-bootstrap";
 import StatementItem from "../components/StatementItem";
 import UploadModal from "../components/UploadModal";
 import { useUser } from "../contexts/UserContext";
 
 function Statements() {
-    const [show, setShow] = useState(false);
+    const [showUpload, setShowUpload] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const { user, userLoading } = useUser();
     const [ data, setData ] = useState([
         {id: "1", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
@@ -35,7 +36,7 @@ function Statements() {
                 </Col>
                 <Col sm={12} md={3} className="text-md-end ">
                     <ButtonGroup size="lg">
-                        <Button variant="dark" onClick={() => setShow(true)}>
+                        <Button variant="dark" onClick={() => setShowUpload(true)}>
                             Upload
                         </Button>
                         <Button 
@@ -48,27 +49,6 @@ function Statements() {
                         >
                             Delete
                         </Button>
-                        {/* <Button
-                            variant="dark"
-                            onClick={() => {
-                                const fetchD = async () => {
-                                    try{
-                                        const response = await api.post("/statements/create", {
-                                            "name": "dec_capital",
-                                            "company": "capitalone",
-                                            "month": "december",
-                                            "filename": "dec_caone.csv"
-                                        })
-                                        console.log(response.data)
-                                    } catch (err){
-                                        console.log(err.response.data.message)
-                                    }
-                                }
-                                fetchD();
-                            }}
-                        >
-                            Test
-                        </Button> */}
                     </ButtonGroup>
                 </Col>
             </Row>
@@ -87,7 +67,12 @@ function Statements() {
                 </Col>
             </Row>
         </Container>
-        <UploadModal show={show} setShow={setShow}/>
+        <UploadModal show={showUpload} setShow={setShowUpload} setShowToast={setShowToast}/>
+        <ToastContainer position="bottom-center">
+            <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
+                <Toast.Body>Statement uploaded successfully!</Toast.Body>
+            </Toast>
+        </ToastContainer>
     </>
     )
 }

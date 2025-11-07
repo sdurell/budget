@@ -5,7 +5,7 @@ import api from "../services/api";
 
 const expectedHeaders = ["date", "name", "amount", "category"];
 
-export default function UploadModal({ show, setShow }){
+export default function UploadModal({ show, setShow, setShowToast }){
     const [error, setError] = useState("");
     const [validated, setValidated] = useState(false);
 
@@ -84,21 +84,23 @@ export default function UploadModal({ show, setShow }){
 
         if(form.checkValidity() === false){
             e.stopPropagation();
-        } else {
-            try{
-                const response = await api.post(
-                    "/statements/create",
-                    JSON.stringify({name, company, month, filename, transactions}),
-                    { withCredentials: true}
-                );
-                console.log("Form submitted: ", {name,company,month,transactions});
-            } catch(error) {
-                setError(error.message);
-            } 
-            
+            setValidated(true);
+            return;
         }
-
-        setValidated(true);
+        
+        try{
+            const response = await api.post(
+                "/statements/create",
+                JSON.stringify({name, company, month, filename, transactions}),
+                { withCredentials: true}
+            );
+            setValidated(false);
+            handleClose();
+            setShowToast(true);
+        } catch(error) {
+            setError(error.response?.data?.message || "Upload failed");
+            setValidated(true);
+        }
     };
 
     function handleClose() {
@@ -143,12 +145,16 @@ export default function UploadModal({ show, setShow }){
                     <Form.Group as={Row} controlId="formMonth" className="mb-3">
                         <Form.Label column sm="3">Month</Form.Label>
                         <Col sm="9">
-                            <Form.Control 
-                                type="text" 
+                            <Form.Select  
                                 required
                                 value={month}
                                 onChange={(e) => setMonth(e.target.value)}
-                            />
+                            >
+                                <option value =""></option>
+                                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                                    <option key={m} value={m}>{m}</option>
+                                ))}
+                            </Form.Select>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="formFile" className="mb-3">
