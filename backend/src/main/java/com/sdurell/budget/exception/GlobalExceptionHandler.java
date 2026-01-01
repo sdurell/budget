@@ -9,6 +9,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(StatementNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleStatementNotFound(StatementNotFoundException ex){
+        Map<String, String> response = Map.of(
+            "error", "Statement Not Found",
+            "message", ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
     
     @ExceptionHandler(DuplicateFilenameException.class)
     public ResponseEntity<Map<String, String>> handleDuplicate(DuplicateFilenameException ex){

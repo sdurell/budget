@@ -1,12 +1,13 @@
 import Papa from "papaparse";
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-import api from "../services/api";
 
 const expectedHeaders = ["date", "name", "amount", "category"];
 
-export default function UploadModal({ show, setShow, setShowToast }){
+export default function UploadModal({ show, setShow, setShowToast, setToastMessage, uploadStatements }){
+    
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [validated, setValidated] = useState(false);
 
     const [name, setName] = useState("");
@@ -88,18 +89,18 @@ export default function UploadModal({ show, setShow, setShowToast }){
             return;
         }
         
-        try{
-            const response = await api.post(
-                "/statements/create",
-                JSON.stringify({name, company, month, filename, transactions}),
-                { withCredentials: true}
-            );
+        try {
+            setLoading(true);
+            await uploadStatements(name, company, month, filename, transactions);
             setValidated(false);
             handleClose();
+            setToastMessage("Statement uploaded successfully!");
             setShowToast(true);
-        } catch(error) {
+        } catch (error) {
             setError(error.response?.data?.message || "Upload failed");
             setValidated(true);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -171,10 +172,19 @@ export default function UploadModal({ show, setShow, setShowToast }){
                 {error && <p className="text-danger">{error}</p>}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button 
+                    disabled={loading}
+                    variant="secondary"
+                    onClick={handleClose}
+                >
                     Close
                 </Button>
-                <Button variant="primary" type="submit" form="uploadForm">
+                <Button 
+                    disabled={loading}
+                    variant="primary"
+                    type="submit"
+                    form="uploadForm"
+                >
                     Submit
                 </Button>
             </Modal.Footer>

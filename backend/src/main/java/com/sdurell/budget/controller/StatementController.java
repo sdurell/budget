@@ -1,11 +1,16 @@
 package com.sdurell.budget.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdurell.budget.dto.StatementDto;
@@ -25,7 +30,17 @@ public class StatementController {
         this.statementService = statementService;
     }
 
-    @PostMapping("/create")
+    @GetMapping()
+    public ResponseEntity<List<StatementDto>> getAll(Authentication auth) {
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        Long userId = userDetails.getId();
+
+        List<StatementDto> dtos = statementService.getStatementsByUserId(userId);
+
+        return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping()
     public ResponseEntity<StatementDto> create(
         Authentication auth, 
         @Valid @RequestBody StatementDto statementDto)
@@ -37,4 +52,17 @@ public class StatementController {
         
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> delete(
+            Authentication auth, 
+            @RequestParam List<Long> ids) 
+        {
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        Long userId = userDetails.getId();
+
+        statementService.deleteStatements(userId, ids);
+        return ResponseEntity.noContent().build();
+    }
+    
 }
