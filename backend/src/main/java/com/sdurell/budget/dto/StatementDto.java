@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class StatementDto {
+    private Long id;
     @NotBlank
     private String name;
     @NotBlank
@@ -24,6 +25,7 @@ public class StatementDto {
 
     public Statement toEntity() {
         Statement statement = new Statement();
+        statement.setId(this.id);
         statement.setName(this.name);
         statement.setCompany(this.company);
         statement.setMonth(this.month);
@@ -42,6 +44,7 @@ public class StatementDto {
 
     public static StatementDto fromEntity(Statement statement) {
         StatementDto dto = new StatementDto();
+        dto.setId(statement.getId());
         dto.setName(statement.getName());
         dto.setCompany(statement.getCompany());
         dto.setMonth(statement.getMonth());

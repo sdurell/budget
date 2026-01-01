@@ -1,37 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, ButtonGroup, Col, Container, ListGroup, Row, Toast, ToastContainer } from "react-bootstrap";
+import DeleteModal from "../components/DeleteModal";
 import StatementItem from "../components/StatementItem";
 import UploadModal from "../components/UploadModal";
-import { useUser } from "../contexts/UserContext";
+import useStatement from "../hooks/UseStatement";
 
 function Statements() {
-    const [showUpload, setShowUpload] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const { user, userLoading } = useUser();
-    const [ data, setData ] = useState([
-        {id: "1", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
-        {id: "2", name: "Oct 2025", company: "citi", file: "citi2025oct.csv", date: "10-20-25"},
-        {id: "3", name: "Sept 2025", company: "discover", file: "discspet2025.csv", date: "10-18-25"},
-        {id: "4", name: "Aug 2025", company: "capital one", file: "capaug25.csv", date: "10-20-25"},
-        {id: "5", name: "Oct 2025", company: "discover", file: "discoct2025.csv", date: "10-20-25"},
-        {id: "6", name: "Oct 2025", company: "citi", file: "citi2025oct.csv", date: "10-20-25"},
-        {id: "7", name: "Sept 2025", company: "discover", file: "discspet2025.csv", date: "10-18-25"},
-        {id: "8", name: "Aug 2025", company: "capital one", file: "capaug25.csv", date: "10-20-25"}  
-    ]);
-    const [ idChecked, setIdChecked ] = useState([]);
+    const { statements, idChecked, handleCheck, fetchStatements, uploadStatements, deleteStatements } = useStatement();
 
-    function handleCheck(checked, id) {
-        setIdChecked(prev => 
-            checked ? [...prev, id] : prev.filter(s => s !== id)
-        )
-    };
+    const [showUpload, setShowUpload] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+
+    useEffect(() => {
+        fetchStatements();
+    }, [ fetchStatements ]);
 
     return (
     <>
         <Container fluid="lg" className="mt-md-5 mt-4">
             <Row className="align-items-center">
                 <Col sm={12} md={9}>
-                    {/* { userLoading ? `` : `${user.username}'s statements`} */}
                     <h1 className="display-4 mb-4 mb-md-0">Your statements</h1>
                 </Col>
                 <Col sm={12} md={3} className="text-md-end ">
@@ -42,10 +32,7 @@ function Statements() {
                         <Button 
                             disabled={idChecked.length === 0}
                             variant="dark"
-                            onClick={() => {
-                                setData(data.filter(s => !idChecked.includes(s.id)));
-                                setIdChecked([]);
-                            }}
+                            onClick={() => setShowDelete(true)}
                         >
                             Delete
                         </Button>
@@ -55,7 +42,7 @@ function Statements() {
             <Row className="mt-md-5 mt-4 mb-5">
                 <Col>
                     <ListGroup>
-                        {data.map(s => (
+                        {statements.map(s => (
                             <StatementItem 
                                 key={s.id}
                                 data={s}
@@ -67,10 +54,26 @@ function Statements() {
                 </Col>
             </Row>
         </Container>
-        <UploadModal show={showUpload} setShow={setShowUpload} setShowToast={setShowToast}/>
+
+        <UploadModal 
+            show={showUpload}
+            setShow={setShowUpload}
+            setShowToast={setShowToast}
+            setToastMessage={setToastMessage}
+            uploadStatements={uploadStatements}
+        />
+
+        <DeleteModal
+            show={showDelete}
+            setShow={setShowDelete}
+            setShowToast={setShowToast}
+            setToastMessage={setToastMessage}
+            deleteStatements={deleteStatements} 
+        />
+
         <ToastContainer position="bottom-center">
             <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
-                <Toast.Body>Statement uploaded successfully!</Toast.Body>
+                <Toast.Body>{toastMessage}</Toast.Body>
             </Toast>
         </ToastContainer>
     </>

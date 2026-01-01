@@ -3,6 +3,7 @@ import api from "../services/api.js";
 
 const UserContext = createContext(null);
 
+// TODO: Should only be used to show who is authenticated
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(true);

@@ -2,7 +2,7 @@ import { Badge, Form, ListGroup } from "react-bootstrap";
 
 export default function StatementItem({data, checked, onChange}) {
 
-    const { id, name, company, file, date } = data;
+    const { id, name, company, filename, month } = data;
 
     return (
         <ListGroup.Item 
@@ -17,13 +17,14 @@ export default function StatementItem({data, checked, onChange}) {
                     type="checkbox"
                     checked={checked}
                     readOnly
+                    className="pe-none"
                 />
             </Form>
             <div className="ms-3 me-auto">
                 <div className="fw-bold">{name}</div>
-                {company}, {file}, {date}
+                {company}, {filename}
             </div>
-            <Badge bg="primary" pill>{id}</Badge>
+            <Badge bg="secondary" >{month}</Badge>
         </ListGroup.Item>
     );
 }
