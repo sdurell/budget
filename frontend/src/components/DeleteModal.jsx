@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { useToast } from "../contexts/ToastContext";
 
-export default function DeleteModal({ show, setShow, setShowToast, setToastMessage, deleteStatements }) {
+export default function DeleteModal({ show, setShow, deleteStatements }) {
+    const { showToast } = useToast();
 
     const [ error, setError ] = useState("");
     const [ loading, setLoading ] = useState(false);
@@ -16,8 +18,7 @@ export default function DeleteModal({ show, setShow, setShowToast, setToastMessa
             setLoading(true);
             await deleteStatements();
             handleClose();
-            setToastMessage("Statement(s) deleted successfully!");
-            setShowToast(true);
+            showToast("Statement(s) deleted successfully!");
         } catch (error) {
             setError(error.response?.data?.message || "Delete failed");
         } finally {

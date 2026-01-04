@@ -10,8 +10,6 @@ function Statements() {
 
     const [showUpload, setShowUpload] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
 
     useEffect(() => {
         fetchStatements();
@@ -58,24 +56,14 @@ function Statements() {
         <UploadModal 
             show={showUpload}
             setShow={setShowUpload}
-            setShowToast={setShowToast}
-            setToastMessage={setToastMessage}
             uploadStatements={uploadStatements}
         />
 
         <DeleteModal
             show={showDelete}
             setShow={setShowDelete}
-            setShowToast={setShowToast}
-            setToastMessage={setToastMessage}
             deleteStatements={deleteStatements} 
         />
-
-        <ToastContainer position="bottom-center">
-            <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide>
-                <Toast.Body>{toastMessage}</Toast.Body>
-            </Toast>
-        </ToastContainer>
     </>
     )
 }

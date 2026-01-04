@@ -1,11 +1,14 @@
 import Papa from "papaparse";
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { useToast } from "../contexts/ToastContext";
 
 const expectedHeaders = ["date", "name", "amount", "category"];
 
-export default function UploadModal({ show, setShow, setShowToast, setToastMessage, uploadStatements }){
+export default function UploadModal({ show, setShow, uploadStatements }){
     
+    const { showToast } = useToast();
+
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [validated, setValidated] = useState(false);
@@ -94,8 +97,7 @@ export default function UploadModal({ show, setShow, setShowToast, setToastMessa
             await uploadStatements(name, company, month, filename, transactions);
             setValidated(false);
             handleClose();
-            setToastMessage("Statement uploaded successfully!");
-            setShowToast(true);
+            showToast("Statement uploaded successfully!");
         } catch (error) {
             setError(error.response?.data?.message || "Upload failed");
             setValidated(true);
