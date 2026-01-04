@@ -1,7 +1,10 @@
 import { useCallback, useState } from "react";
 import api from "../services/api";
+import { useToast } from "../contexts/ToastContext";
 
 export default function useStatement() {
+    const { showToast } = useToast();
+
     const [ statements, setStatements ] = useState([]);
     const [ idChecked, setIdChecked ] = useState([]);
 
@@ -17,6 +20,7 @@ export default function useStatement() {
             setStatements(response.data);
         } catch (error) {
             console.error("Failed to fetch statements", error);
+            showToast("Failed to fetch statements.");
         }
     }, []);
 
