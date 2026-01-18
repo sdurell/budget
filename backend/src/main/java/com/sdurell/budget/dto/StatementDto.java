@@ -7,6 +7,7 @@ import com.sdurell.budget.model.Statement;
 import com.sdurell.budget.model.Transaction;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,7 @@ public class StatementDto {
     private String name;
     @NotBlank
     private String company;
-    @NotBlank
+    @NotNull
     private Date date;
     private Date uploadDate;
     @NotBlank

@@ -28,7 +28,7 @@ public class StatementService {
     }
 
     public List<StatementDto> getStatementsByUserId(Long userId) {
-        return statementRepository.findAllByUserIdOrderByDate(userId)
+        return statementRepository.findAllByUserIdOrderByDateDesc(userId)
             .stream()
             .map(StatementDto::fromEntity)
             .toList();
