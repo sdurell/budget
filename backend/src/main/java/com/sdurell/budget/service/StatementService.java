@@ -1,5 +1,6 @@
 package com.sdurell.budget.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class StatementService {
     }
 
     public List<StatementDto> getStatementsByUserId(Long userId) {
-        return statementRepository.findAllByUserId(userId)
+        return statementRepository.findAllByUserIdOrderByDateDesc(userId)
             .stream()
             .map(StatementDto::fromEntity)
             .toList();
@@ -43,6 +44,7 @@ public class StatementService {
 
         Statement statement = statementDto.toEntity();
         statement.setUser(user);
+        statement.setUploadDate(new Date(System.currentTimeMillis()));
 
         Statement saved = statementRepository.save(statement);
         return StatementDto.fromEntity(saved);

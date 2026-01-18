@@ -1,11 +1,13 @@
 package com.sdurell.budget.dto;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.sdurell.budget.model.Statement;
 import com.sdurell.budget.model.Transaction;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +19,9 @@ public class StatementDto {
     private String name;
     @NotBlank
     private String company;
-    @NotBlank
-    private String month;
+    @NotNull
+    private Date date;
+    private Date uploadDate;
     @NotBlank
     private String filename;
     private List<TransactionDto> transactions;
@@ -28,7 +31,8 @@ public class StatementDto {
         statement.setId(this.id);
         statement.setName(this.name);
         statement.setCompany(this.company);
-        statement.setMonth(this.month);
+        statement.setDate(this.date);
+        statement.setUploadDate(this.uploadDate);
         statement.setFilename(this.filename);
         if (this.transactions != null) {
             statement.setTransactions(this.transactions.stream()
@@ -47,7 +51,8 @@ public class StatementDto {
         dto.setId(statement.getId());
         dto.setName(statement.getName());
         dto.setCompany(statement.getCompany());
-        dto.setMonth(statement.getMonth());
+        dto.setDate(statement.getDate());
+        dto.setUploadDate(statement.getUploadDate());
         dto.setFilename(statement.getFilename());
         if (statement.getTransactions() != null){
             dto.setTransactions(statement.getTransactions()

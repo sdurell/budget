@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import api from "../services/api";
 import { useToast } from "../contexts/ToastContext";
+import api from "../services/api";
 
 export default function useStatement() {
     const { showToast } = useToast();
@@ -24,14 +24,14 @@ export default function useStatement() {
         }
     }, []);
 
-    const uploadStatements = async (name, company, month, filename, transactions) => {
+    const uploadStatements = async (name, company, date, filename, transactions) => {
         try {
             await api.post(
                 "/statements",
                 {
                     name: name,
                     company: company,
-                    month: month,
+                    date: date,
                     filename: filename,
                     transactions: transactions
                 },
