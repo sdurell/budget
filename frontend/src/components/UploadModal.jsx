@@ -1,8 +1,8 @@
+import { format, isValid, parse as parseDate } from "date-fns";
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { useToast } from "../contexts/ToastContext";
 import useParseCSV from "../hooks/UseParseCSV";
-import { parse as parseDate, isValid, format } from "date-fns";
 
 const expectedHeaders = ["date", "name", "amount", "category"];
 
@@ -16,7 +16,7 @@ export default function UploadModal({ show, setShow, uploadStatements }){
 
     const [name, setName] = useState("");
     const [company, setCompany] = useState("");
-    const [month, setMonth] = useState("");
+    const [date, setDate] = useState("");
     const [transactions, setTransactions] = useState(null);
 
     async function handleFileChange(e) {
@@ -71,7 +71,9 @@ export default function UploadModal({ show, setShow, uploadStatements }){
         
         try {
             setLoading(true);
-            await uploadStatements(name, company, month, filename, transactions);
+            const parsedDate = parseDate(date, 'yyyy-MM-dd', new Date());
+            const formattedDate = format(parsedDate, 'yyyy-MM-dd');
+            await uploadStatements(name, company, formattedDate, filename, transactions);
             setValidated(false);
             handleClose();
             showToast("Statement uploaded successfully!");
@@ -88,7 +90,7 @@ export default function UploadModal({ show, setShow, uploadStatements }){
         setValidated(false);
         setName("");
         setCompany("");
-        setMonth("");
+        setDate("");
         setTransactions(null);
         setError("");
     };
@@ -122,19 +124,15 @@ export default function UploadModal({ show, setShow, uploadStatements }){
                             />
                         </Col>
                     </Form.Group>
-                    <Form.Group as={Row} controlId="formMonth" className="mb-3">
-                        <Form.Label column sm="3">Month</Form.Label>
+                    <Form.Group as={Row} controlId="formDate" className="mb-3">
+                        <Form.Label column sm="3">Date</Form.Label>
                         <Col sm="9">
-                            <Form.Select  
+                            <Form.Control
+                                type="date"
                                 required
-                                value={month}
-                                onChange={(e) => setMonth(e.target.value)}
-                            >
-                                <option value =""></option>
-                                {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
-                                    <option key={m} value={m}>{m}</option>
-                                ))}
-                            </Form.Select>
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                            />
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="formFile" className="mb-3">

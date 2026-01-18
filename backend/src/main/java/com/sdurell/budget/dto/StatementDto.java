@@ -1,5 +1,6 @@
 package com.sdurell.budget.dto;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.sdurell.budget.model.Statement;
@@ -18,7 +19,8 @@ public class StatementDto {
     @NotBlank
     private String company;
     @NotBlank
-    private String month;
+    private Date date;
+    private Date uploadDate;
     @NotBlank
     private String filename;
     private List<TransactionDto> transactions;
@@ -28,7 +30,8 @@ public class StatementDto {
         statement.setId(this.id);
         statement.setName(this.name);
         statement.setCompany(this.company);
-        statement.setMonth(this.month);
+        statement.setDate(this.date);
+        statement.setUploadDate(this.uploadDate);
         statement.setFilename(this.filename);
         if (this.transactions != null) {
             statement.setTransactions(this.transactions.stream()
@@ -47,7 +50,8 @@ public class StatementDto {
         dto.setId(statement.getId());
         dto.setName(statement.getName());
         dto.setCompany(statement.getCompany());
-        dto.setMonth(statement.getMonth());
+        dto.setDate(statement.getDate());
+        dto.setUploadDate(statement.getUploadDate());
         dto.setFilename(statement.getFilename());
         if (statement.getTransactions() != null){
             dto.setTransactions(statement.getTransactions()

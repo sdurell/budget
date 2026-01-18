@@ -10,7 +10,7 @@ public interface StatementRepository extends JpaRepository<Statement, Long> {
 
     Boolean existsByFilenameAndUserId(String filename, Long userId);
 
-    List<Statement> findAllByUserId(Long userId);
+    List<Statement> findAllByUserIdOrderByDate(Long userId);
 
     List<Statement> findAllByIdInAndUserId(List<Long> ids, Long userId);
 
