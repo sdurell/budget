@@ -1,24 +1,39 @@
+import { useMemo } from "react";
 import { Table } from "react-bootstrap";
-import { useUser } from '../contexts/UserContext';
 
-function TransactionTable() {
+function TransactionTable({ transactions }) {
 
-    const { transactions } = useUser();
+    const columns = useMemo(() => {
+        if (!transactions || transactions.length === 0) return [];
+        return Object.keys(transactions[0]).filter(key => key !== "id");
+    }, [transactions]);
 
-    if (transactions.length === 0){
-        return;
+    if (!transactions || transactions.length === 0) {
+        return (
+            <div 
+                className="text-center p-3 text-muted"
+            >
+                No transactions available
+            </div>
+        );
     }
 
     return (
-        <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            <Table striped bordered hover size="sm" className="table-bordered bg-success text-light rounded-3 overflow-hidden">
+        <div 
+            style={{ maxHeight: '400px', overflowY: 'auto' }}
+        >
+            <Table 
+                striped 
+                bordered 
+                hover 
+                size="sm" 
+                className="bg-success rounded-3 overflow-hidden"
+            >
                 <thead>
                     <tr>
-                        {Object.keys(transactions[0])
-                            .filter(key => key !== "id")
-                            .map(key => (
-                                <th key={key}>
-                                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                        {columns.map(key => (
+                                <th key={key} className="text-capitalize">
+                                    {key}
                                 </th>
                         ))}
                     </tr>
@@ -27,11 +42,9 @@ function TransactionTable() {
                 <tbody>
                     {transactions.map(t => (
                         <tr key={t.id}>
-                            {Object.keys(t)
-                                .filter(key => key != "id")
-                                .map(key => (
-                                    <td key={`${t.id}-${key}`}>
-                                        {t[key]}
+                            {columns.map(col => (
+                                    <td key={`${t.id}-${col}`}>
+                                        {t[col]}
                                     </td>
                             ))}
                         </tr>
@@ -39,7 +52,6 @@ function TransactionTable() {
                 </tbody>
             </Table>
         </div>
-    
     );
 }
 

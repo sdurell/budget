@@ -4,7 +4,7 @@ import TransactionTable from "../components/TransactionTable";
 import { useUser } from "../contexts/UserContext";
 
 function Home() {
-    const { user, userLoading, transactionsLoading, chartLoading } = useUser();
+    const { user, transactions, userLoading, transactionsLoading, chartLoading } = useUser();
 
     const dataLoading = transactionsLoading || chartLoading;  
 
@@ -24,7 +24,7 @@ function Home() {
                             <SpendingPie/>
                         </Col>
                         <Col md="7">
-                            <TransactionTable/>
+                            <TransactionTable transactions={[]}/>
                         </Col>
                     </>
                 )}
