@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
 
 function Login() {
-    const { token, login } = useAuth();
+    const { token, initializing, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -21,33 +21,22 @@ function Login() {
     if (token) return <Navigate to={from} replace />;
 
 
-    async function handleSubmit(e) {
-        const form = e.currentTarget;
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (form.checkValidity() === false){
-            e.stopPropagation();
-            setValidated(true);
-            return;
-        }
-
+        setLoading(true);
         try {
-            setLoading(true);
             const response = await api.post("/auth/login",
-                {
-                    "username": username,
-                    "password": password
-                },
+                JSON.stringify({username, password}),
                 {
                     withCredentials: true
                 }
             );
-            setValidated(false);
+
             login(response.data.accessToken);
             navigate(from, {replace : true});
-        } catch (error) {
-            setError(error.response?.data?.message || "Login failed");
-            setValidated(true);
+        } catch (err) {
+            setError(err.message);
         }
         finally{
             setLoading(false);
@@ -55,10 +44,7 @@ function Login() {
     };
 
     return (
-        <Container 
-            className="d-flex justify-content-center align-items-center" 
-            style={{ height: "75vh" }}
-        >
+        <Container className="d-flex justify-content-center align-items-center" style={{ height: "75vh" }}>
             <div className="text-center border rounded p-4 shadow-sm bg-white">
                 <h2>Welcome Back!</h2>
                 <p>Please login</p>
@@ -68,33 +54,39 @@ function Login() {
                     validated={validated}
                     onSubmit={handleSubmit}
                 >
-                    <Form.Control 
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        className="mb-2"
-                        size="md"
-                    />
-                    <Form.Control
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
+                    <FloatingLabel
+                        controlId="formUsername"
+                        label="Username"
                         className="mb-3"
-                        size="md"
-                    />
+                    >
+                        <Form.Control 
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </FloatingLabel>
+                    <FloatingLabel
+                        controlId="formPassword"
+                        label="Password"
+                        className="mb-3"
+                    >
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </FloatingLabel>
                     {error && <p className="text-danger">{error}</p>}
                     <Button 
                         disabled={loading}
                         variant="primary"
-                        type="submit"
                         form="loginForm"
-                        className="d-block ms-auto mb-3"
                     >
-                        Login
+                        {loading ? "Loading..." : "Login"}
                     </Button>
                 </Form>
             </div>
