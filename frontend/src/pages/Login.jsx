@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { Button, Container, Form } from "react-bootstrap";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
 
 function Login() {
-    const { token, initializing, login } = useAuth();
+    const { token, login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -15,26 +16,38 @@ function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [validated, setValidated] = useState(false);
     
     if (token) return <Navigate to={from} replace />;
 
 
-    const handleSubmit = async (e) => {
+    async function handleSubmit(e) {
+        const form = e.currentTarget;
         e.preventDefault();
 
-        setLoading(true);
+        if (form.checkValidity() === false){
+            e.stopPropagation();
+            setValidated(true);
+            return;
+        }
+
         try {
+            setLoading(true);
             const response = await api.post("/auth/login",
-                JSON.stringify({username, password}),
+                {
+                    "username": username,
+                    "password": password
+                },
                 {
                     withCredentials: true
                 }
             );
-
+            setValidated(false);
             login(response.data.accessToken);
             navigate(from, {replace : true});
-        } catch (err) {
-            setError(err.message);
+        } catch (error) {
+            setError(error.response?.data?.message || "Login failed");
+            setValidated(true);
         }
         finally{
             setLoading(false);
@@ -42,34 +55,50 @@ function Login() {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center" style={{ height: "75vh" }}>
+        <Container 
+            className="d-flex justify-content-center align-items-center" 
+            style={{ height: "75vh" }}
+        >
             <div className="text-center border rounded p-4 shadow-sm bg-white">
                 <h2>Welcome Back!</h2>
                 <p>Please login</p>
-                <form onSubmit={handleSubmit}>
-                    <input 
+                <Form
+                    id="loginForm"
+                    noValidate
+                    validated={validated}
+                    onSubmit={handleSubmit}
+                >
+                    <Form.Control 
                         type="text"
-                        className="form-control my-2"
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        className="mb-2"
+                        size="md"
                     />
-                    <input
+                    <Form.Control
                         type="password"
-                        className="form-control my-2"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="mb-3"
+                        size="md"
                     />
                     {error && <p className="text-danger">{error}</p>}
-                    <button type="submit" className="btn btn-primary w-100 mb-4 mt-2" disabled={loading}>
-                        {loading ? "Loading..." : "Login"}
-                    </button>
-                </form>
+                    <Button 
+                        disabled={loading}
+                        variant="primary"
+                        type="submit"
+                        form="loginForm"
+                        className="d-block ms-auto mb-3"
+                    >
+                        Login
+                    </Button>
+                </Form>
             </div>
-        </div>
+        </Container>
     )
 }
 
