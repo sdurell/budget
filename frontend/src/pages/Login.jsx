@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button, Container, FloatingLabel, Form } from "react-bootstrap";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
@@ -15,6 +16,7 @@ function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [validated, setValidated] = useState(false);
     
     if (token) return <Navigate to={from} replace />;
 
@@ -42,34 +44,53 @@ function Login() {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center" style={{ height: "75vh" }}>
+        <Container className="d-flex justify-content-center align-items-center" style={{ height: "75vh" }}>
             <div className="text-center border rounded p-4 shadow-sm bg-white">
                 <h2>Welcome Back!</h2>
                 <p>Please login</p>
-                <form onSubmit={handleSubmit}>
-                    <input 
-                        type="text"
-                        className="form-control my-2"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                    <input
-                        type="password"
-                        className="form-control my-2"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                <Form
+                    id="loginForm"
+                    noValidate
+                    validated={validated}
+                    onSubmit={handleSubmit}
+                >
+                    <FloatingLabel
+                        controlId="formUsername"
+                        label="Username"
+                        className="mb-3"
+                    >
+                        <Form.Control 
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </FloatingLabel>
+                    <FloatingLabel
+                        controlId="formPassword"
+                        label="Password"
+                        className="mb-3"
+                    >
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </FloatingLabel>
                     {error && <p className="text-danger">{error}</p>}
-                    <button type="submit" className="btn btn-primary w-100 mb-4 mt-2" disabled={loading}>
+                    <Button 
+                        disabled={loading}
+                        variant="primary"
+                        form="loginForm"
+                    >
                         {loading ? "Loading..." : "Login"}
-                    </button>
-                </form>
+                    </Button>
+                </Form>
             </div>
-        </div>
+        </Container>
     )
 }
 
