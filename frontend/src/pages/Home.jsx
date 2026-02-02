@@ -1,33 +1,36 @@
+import React, { useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import SpendingPie from "../components/SpendingPie";
 import TransactionTable from "../components/TransactionTable";
 import { useUser } from "../contexts/UserContext";
+import useTransaction from "../hooks/UseTransaction";
 
 function Home() {
-    const { user, transactions, userLoading, transactionsLoading, chartLoading } = useUser();
+    const { user, userLoading } = useUser();  
+    const { transactions, transactionsLoading, fetchTransactions } = useTransaction();
 
-    const dataLoading = transactionsLoading || chartLoading;  
+    useEffect(() => {
+        fetchTransactions();
+    }, [fetchTransactions]);
+
+    if (userLoading || transactionsLoading) {
+        return;
+    }
 
     return (
         <Container fluid="lg" className="mt-5">
             <Row>
                 <Col className="text-center display-3 mb-4">
-                    { userLoading ? `` : `Hello ${user.username}!`}
+                    { `Hello ${user.username}!`}
                 </Col>
             </Row>
             <Row className="mt-5 mb-5">
-                {/* Todo: Show spinner if data takes a while to load. Below shows spinner for a split second every load which is ugly */}
-                {/* { dataLoading ? (<MySpinner/>) : ( */}
-                { dataLoading ? "" : (
-                    <>
-                        <Col md="5">
-                            <SpendingPie/>
-                        </Col>
-                        <Col md="7">
-                            <TransactionTable transactions={[]}/>
-                        </Col>
-                    </>
-                )}
+                <Col md="5" style={{ maxHeight: "400px" }}>
+                    <SpendingPie transactions={transactions}/>
+                </Col>
+                <Col md="7">
+                    <TransactionTable transactions={transactions}/>
+                </Col>
             </Row>
         </Container>
     )

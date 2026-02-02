@@ -1,5 +1,6 @@
 HELP.md
 GEMINI.md
+jsconfig.json
 target/
 statements
 .mvn/wrapper/maven-wrapper.jar
