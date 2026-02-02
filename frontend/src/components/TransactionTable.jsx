@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Table } from "react-bootstrap";
 
 function TransactionTable({ transactions }) {

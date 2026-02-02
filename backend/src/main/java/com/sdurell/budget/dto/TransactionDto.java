@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransactionDto {
     private Long id;
+    //TODO: add validators
     private String name;
     private Date date;
     @JsonSerialize(using = TwoDecimalSerializer.class)
