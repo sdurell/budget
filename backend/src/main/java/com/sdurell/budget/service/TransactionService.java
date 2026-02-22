@@ -14,9 +14,7 @@ public class TransactionService {
     
     private TransactionRepository transactionRepository;
 
-    public TransactionService(
-        TransactionRepository transactionRepository
-    ) {
+    public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -26,7 +24,7 @@ public class TransactionService {
             Date endDate
         ) {
         if (startDate == null) {
-            startDate = Date.valueOf(LocalDate.now().minusMonths(1));
+            startDate = Date.valueOf(LocalDate.of(1900,1,1)); // arbitrary old date
         }
         if (endDate == null) {
             endDate = Date.valueOf(LocalDate.now());

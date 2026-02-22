@@ -7,10 +7,10 @@ export default function useTransaction() {
     const [ transactions, setTransactions ] = useState([]);
     const [ transactionsLoading, setTransactionsLoading ] = useState(true);
     
-    const fetchTransactions = useCallback(async () => {
+    const fetchTransactions = useCallback(async (startDate) => {
         try {
             setTransactionsLoading(true);
-            const response = await api.get("/transactions");
+            const response = await api.get("/transactions", { params: { startDate } });
             setTransactions(response.data);
         } catch (error) {
             console.error("Failed to fetch transactions", error);
