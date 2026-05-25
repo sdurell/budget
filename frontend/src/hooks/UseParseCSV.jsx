@@ -27,8 +27,8 @@ function levenshtein(a, b) {
 function guessCompanyFromFilename(filename, companies) {
     if (!companies || companies.length === 0) return "";
     const cleanFilename = filename.toLowerCase().replace('.csv', '').replace(/[^a-z]/g, ' ');
-    const words = cleanFilename.split(/\s+/).filter(w => w.length > 2);
     const ignoreWords = new Set(["bank", "credit", "card", "union", "federal", "statement", "the", "and"]);
+    const words = cleanFilename.split(/\s+/).filter(w => w.length > 2 && !ignoreWords.has(w));
 
     let bestMatch = "";
     let bestScore = 0.65; // Threshold for a word to be considered a fuzzy match
@@ -43,8 +43,6 @@ function guessCompanyFromFilename(filename, companies) {
 
         // 2. Fuzzy match word by word for misspellings
         for (const word of words) {
-            if (ignoreWords.has(word)) continue;
-
             for (const compWord of cleanCompany.split(/\s+/)) {
                 if (compWord.length < 3 || ignoreWords.has(compWord)) continue;
 
