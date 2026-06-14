@@ -1,40 +1,70 @@
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
+import React, { useMemo } from "react";
 import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Legend, Tooltip);
 
-function SpendingPie({ transactions }){
+const SPENDING_COLORS = [
+    "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+    "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
+    "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
+];
 
-    if(transactions.length === 0){
-        return;
-    }
-
+function SpendingPie({ transactions = [] }){
+    
     // Aggregate totals by category to ensure labels and data match length
-    const aggregated = transactions.reduce((acc, item) => {
-        const { category, amount } = item;
-        if (category.toLowerCase() == "payment") {
+    const aggregated = useMemo(() => {
+        const initial = transactions.reduce((acc, item) => {
+            const { category, amount } = item;
+            if (category.toLowerCase() === "payment") {
+                return acc;
+            }
+            acc[category] = (acc[category] || 0) + Math.abs(amount);
             return acc;
-        }
-        acc[category] = (acc[category] || 0) + Math.abs(amount);
-        return acc;
-    }, {});
+        }, {});
 
-    const data = {
-        labels: Object.keys(aggregated),
-        datasets: [
-        {
-            label: "Spending ($)",
-            data: Object.values(aggregated),
-            backgroundColor: [
-            "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
-            "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
-            "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
+        const totalSum = Object.values(initial).reduce((acc, val) => {
+            return acc + val;
+        }, 0);
+        const threshold = totalSum * 0.05;
+        
+        return Object.entries(initial).reduce((acc, [category, amount]) => {
+            if ( amount < threshold ) {
+                acc["Other"] = (acc["Other"] || 0) + amount;
+            } else {
+                acc[category] = amount;
+            }
+            return acc;
+        }, {});
+    }, [transactions]);
+
+    const isEmpty = !transactions || transactions.length === 0 || Object.keys(aggregated).length === 0;
+
+    const data = isEmpty
+        ? {
+            labels: ["No Transactions"],
+            datasets: [
+                {
+                    label: "Spending ($)",
+                    data: [1],
+                    backgroundColor: ["#E5E7EB"],
+                    borderColor: "#fff",
+                    borderWidth: 2,
+                },
             ],
-            borderColor: "#fff",
-            borderWidth: 2,
-        },
-        ],
-    };
+        }
+        : {
+            labels: Object.keys(aggregated),
+            datasets: [
+                {
+                    label: "Spending ($)",
+                    data: Object.values(aggregated),
+                    backgroundColor: SPENDING_COLORS,
+                    borderColor: "#fff",
+                    borderWidth: 2,
+                },
+            ],
+        };
 
     const options = {
         responsive: true,
@@ -43,6 +73,7 @@ function SpendingPie({ transactions }){
                 position: "bottom",
             },
             tooltip: {
+                enabled: !isEmpty,
                 callbacks: {
                     label: (tooltipItem) => {
                         const value = tooltipItem.raw;
@@ -55,7 +86,7 @@ function SpendingPie({ transactions }){
 
     return (
         <Pie data={data} options={options}/>
-    )
+    );
 }
 
 export default SpendingPie;
