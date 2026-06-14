@@ -47,7 +47,7 @@ function Home() {
             
             <div className="border rounded p-4 mt-3 mt-md-4 mb-5 shadow-sm bg-white">
                 <Row className="mb-3">
-                    <Col md="7" className="d-flex justify-content-between align-items-end">
+                    <Col md={{ span: 7, offset: 5 }} className="d-flex justify-content-between align-items-end">
                         <h4 className="m-0">Transactions</h4>
                         <Dropdown>
                             <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -63,10 +63,10 @@ function Home() {
                     </Col>
                 </Row>
                 <Row>
-                    <Col md="7">
+                    <Col md={{ span: 7, order: 2 }}>
                         <TransactionTable transactions={transactions}/>
                     </Col>
-                    <Col md="5" className="mt-5 mt-md-0 d-flex justify-content-center" style={{ maxHeight: "400px" }}>
+                    <Col md={{ span: 5, order: 1 }} className="mt-5 mt-md-0 d-flex justify-content-center" style={{ maxHeight: "400px" }}>
                         <SpendingPie transactions={transactions}/>
                     </Col>
                 </Row>

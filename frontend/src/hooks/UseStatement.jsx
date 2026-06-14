@@ -22,7 +22,7 @@ export default function useStatement() {
             console.error("Failed to fetch statements", error);
             showToast("Failed to fetch statements.");
         }
-    }, []);
+    }, [showToast]);
 
     const uploadStatements = async (name, company, date, filename, transactions) => {
         try {
