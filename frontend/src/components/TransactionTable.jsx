@@ -1,12 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Table } from "react-bootstrap";
 
 function TransactionTable({ transactions }) {
-
-    const columns = useMemo(() => {
-        if (!transactions || transactions.length === 0) return [];
-        return Object.keys(transactions[0]).filter(key => key !== "id");
-    }, [transactions]);
 
     if (!transactions || transactions.length === 0) {
         return (
@@ -17,6 +12,8 @@ function TransactionTable({ transactions }) {
             </div>
         );
     }
+
+    const columns = Object.keys(transactions[0]).filter(key => key !== "id");
 
     return (
         <div 

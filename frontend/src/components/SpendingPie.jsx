@@ -12,8 +12,9 @@ const SPENDING_COLORS = [
 
 function SpendingPie({ transactions = [] }){
     
-    // Aggregate totals by category to ensure labels and data match length
-    const aggregated = useMemo(() => {
+    // Aggregate totals by category, construct Chart.js data object,
+    // and construct chart options.
+    const { data, options } = useMemo(() => {
         const initial = transactions.reduce((acc, item) => {
             const { category, amount } = item;
             if (category.toLowerCase() === "payment") {
@@ -29,7 +30,7 @@ function SpendingPie({ transactions = [] }){
         let threshold = totalSum * 0.10;
 
         // Combine bottom entries into one
-        return Object.entries(initial)
+        const aggregated = Object.entries(initial)
             .sort((a, b) => a[1] - b[1])
             .reduce((acc, [category, amount]) => {
                 if ( amount < threshold && threshold - amount > 0 ) {
@@ -40,53 +41,55 @@ function SpendingPie({ transactions = [] }){
                 }
                 return acc;
             }, {});
-    }, [transactions]);
 
-    const isEmpty = !transactions || transactions.length === 0 || Object.keys(aggregated).length === 0;
+        const isEmpty = !transactions || transactions.length === 0 || Object.keys(aggregated).length === 0;
 
-    const data = isEmpty
-        ? {
-            labels: ["No Transactions"],
-            datasets: [
-                {
-                    label: "Spending ($)",
-                    data: [1],
-                    backgroundColor: ["#E5E7EB"],
-                    borderColor: "#fff",
-                    borderWidth: 2,
+        const chartData = isEmpty
+            ? {
+                labels: ["No Transactions"],
+                datasets: [
+                    {
+                        label: "Spending ($)",
+                        data: [1],
+                        backgroundColor: ["#E5E7EB"],
+                        borderColor: "#fff",
+                        borderWidth: 2,
+                    },
+                ],
+            }
+            : {
+                labels: Object.keys(aggregated),
+                datasets: [
+                    {
+                        label: "Spending ($)",
+                        data: Object.values(aggregated),
+                        backgroundColor: SPENDING_COLORS,
+                        borderColor: "#fff",
+                        borderWidth: 2,
+                    },
+                ],
+            };
+
+        const chartOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom",
                 },
-            ],
-        }
-        : {
-            labels: Object.keys(aggregated),
-            datasets: [
-                {
-                    label: "Spending ($)",
-                    data: Object.values(aggregated),
-                    backgroundColor: SPENDING_COLORS,
-                    borderColor: "#fff",
-                    borderWidth: 2,
-                },
-            ],
-        };
-
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: "bottom",
-            },
-            tooltip: {
-                enabled: !isEmpty,
-                callbacks: {
-                    label: (tooltipItem) => {
-                        const value = tooltipItem.raw;
-                        return `$${value.toFixed(2)}`;
+                tooltip: {
+                    enabled: !isEmpty,
+                    callbacks: {
+                        label: (tooltipItem) => {
+                            const value = tooltipItem.raw;
+                            return `$${value.toFixed(2)}`;
+                        },
                     },
                 },
             },
-        },
-    };
+        };
+
+        return { data: chartData, options: chartOptions };
+    }, [transactions]);
 
     return (
         <Pie data={data} options={options}/>

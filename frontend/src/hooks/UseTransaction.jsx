@@ -18,7 +18,7 @@ export default function useTransaction() {
         } finally {
             setTransactionsLoading(false);
         }
-    }, []);
+    }, [showToast]);
 
     return {
         transactions,
