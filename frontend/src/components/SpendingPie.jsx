@@ -27,15 +27,16 @@ function SpendingPie({ transactions = [] }){
         const totalSum = Object.values(initial).reduce((acc, val) => {
             return acc + val;
         }, 0);
-        let threshold = totalSum * 0.10;
+        const threshold = totalSum * 0.10;
 
+        const otherMap = {};
         // Combine bottom entries into one
         const aggregated = Object.entries(initial)
             .sort((a, b) => a[1] - b[1])
             .reduce((acc, [category, amount]) => {
-                if ( amount < threshold && threshold - amount > 0 ) {
+                if ( amount + (acc["Other"] || 0) < threshold ) {
                     acc["Other"] = (acc["Other"] || 0) + amount;
-                    threshold -= amount;
+                    otherMap[category] = amount;
                 } else {
                     acc[category] = amount;
                 }
@@ -80,6 +81,11 @@ function SpendingPie({ transactions = [] }){
                     enabled: !isEmpty,
                     callbacks: {
                         label: (tooltipItem) => {
+                            if (tooltipItem.label === "Other") {
+                                return Object.entries(otherMap).map(
+                                    ([category, amount]) => ` ${category}: ${amount.toFixed(2)}`
+                                );
+                            }
                             const value = tooltipItem.raw;
                             return `$${value.toFixed(2)}`;
                         },
