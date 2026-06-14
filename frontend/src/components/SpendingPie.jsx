@@ -26,16 +26,20 @@ function SpendingPie({ transactions = [] }){
         const totalSum = Object.values(initial).reduce((acc, val) => {
             return acc + val;
         }, 0);
-        const threshold = totalSum * 0.05;
-        
-        return Object.entries(initial).reduce((acc, [category, amount]) => {
-            if ( amount < threshold ) {
-                acc["Other"] = (acc["Other"] || 0) + amount;
-            } else {
-                acc[category] = amount;
-            }
-            return acc;
-        }, {});
+        let threshold = totalSum * 0.10;
+
+        // Combine bottom entries into one
+        return Object.entries(initial)
+            .sort((a, b) => a[1] - b[1])
+            .reduce((acc, [category, amount]) => {
+                if ( amount < threshold && threshold - amount > 0 ) {
+                    acc["Other"] = (acc["Other"] || 0) + amount;
+                    threshold -= amount;
+                } else {
+                    acc[category] = amount;
+                }
+                return acc;
+            }, {});
     }, [transactions]);
 
     const isEmpty = !transactions || transactions.length === 0 || Object.keys(aggregated).length === 0;
